@@ -1,33 +1,48 @@
 #import <Foundation/Foundation.h>
-#import "Unity/IUnityRenderingExtensions.h"
+#import "IUnityGraphicsMetal.h"
 #import "Syphon/LiteServer.h"
 
-static void PluginCallback(UnityRenderingExtEventType event, void* data)
+static IUnityInterfaces* s_interfaces;
+static IUnityGraphicsMetal* s_graphics;
+
+static id<MTLDevice> GetMetalDevice()
 {
-//    NSLog(@"KlakSyphon: Plugin event (%d, %p)", event, data);
-    if (event == 0)
-        [(LiteServer*)data updateFromRenderThread];
-    else
-        [(LiteServer*)data unbound];
+    if (!s_graphics) s_graphics = UNITY_GET_INTERFACE(s_interfaces, IUnityGraphicsMetal);
+    return s_graphics ? s_graphics->MetalDevice() : nil;
 }
 
-void* Klak_GetCallback()
+void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginLoad(IUnityInterfaces* interfaces)
 {
-    return PluginCallback;
+    s_interfaces = interfaces;
 }
 
-LiteServer* Klak_CreateServer(const char* cname, int width, int height, void* texture)
+void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload(void)
+{
+    s_interfaces = NULL;
+    s_graphics = NULL;
+}
+
+LiteServer* Klak_CreateServer(const char* cname, int width, int height)
 {
     NSString* name = [NSString stringWithUTF8String:cname];
-    NSLog(@"KlakSyphon: CreateServer (%@, %d, %d, %p)", name, width, height, texture);
-    LiteServer* instance = [[LiteServer alloc] initWithName:name
-                                                 dimensions:NSMakeSize(width, height)
-                                                textureName:(int)texture];
-    return instance;
+    NSLog(@"KlakSyphon: CreateServer (%@, %d, %d)", name, width, height);
+    return [[LiteServer alloc] initWithName:name
+                                 dimensions:NSMakeSize(width, height)
+                                     device:GetMetalDevice()];
 }
 
 void Klak_DestroyServer(LiteServer* server)
 {
     NSLog(@"KlakSyphon: DestroyServer (%p)", server);
     [server release];
+}
+
+void* Klak_GetServerTexture(LiteServer* server)
+{
+    return server.texture;
+}
+
+void Klak_PublishServerTexture(LiteServer* server)
+{
+    [server publishNewFrame];
 }

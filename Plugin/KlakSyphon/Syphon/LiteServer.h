@@ -1,9 +1,13 @@
 #import <Foundation/Foundation.h>
 
+@protocol MTLDevice;
+@protocol MTLTexture;
+
 @interface LiteServer : NSObject
 
-- (id)initWithName:(NSString*)name dimensions:(NSSize)size textureName:(int)texture;
-- (void)updateFromRenderThread;
-- (void)unbound;
+@property (readonly) id<MTLTexture> texture;
+
+- (id)initWithName:(NSString*)name dimensions:(NSSize)size device:(id<MTLDevice>)device;
+- (void)publishNewFrame;
 
 @end

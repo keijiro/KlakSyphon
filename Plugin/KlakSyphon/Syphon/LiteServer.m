@@ -1,18 +1,17 @@
 #import "LiteServer.h"
 #import "SyphonPrivate.h"
 #import "SyphonServerConnectionManager.h"
-#import <IOSurface/IOSurface.h>
-#import <OpenGL/gl3.h>
+#import <Metal/MTLDevice.h>
+#import <Metal/MTLTexture.h>
 
 @interface LiteServer()
 {
     NSString *_name;
     NSString *_uuid;
     NSSize _size;
-    GLint _texture;
-    GLuint _texture2;
-    SyphonServerConnectionManager *_connection;
     IOSurfaceRef _ioSurface;
+    id<MTLTexture> _texture;
+    SyphonServerConnectionManager *_connection;
 }
 
 @property (readonly, retain) NSString* name;
@@ -32,17 +31,30 @@ static void finalizer()
 
 - (id)init
 {
-    return [self initWithName:nil dimensions:NSZeroSize textureName:0];
+    return [self initWithName:nil dimensions:NSZeroSize device:nil];
 }
 
-- (id)initWithName:(NSString*)name dimensions:(NSSize)size textureName:(int)texture
+- (id)initWithName:(NSString*)name dimensions:(NSSize)size device:(id<MTLDevice>)device
 {
     if (self = [super init])
     {
         _name = [name copy];
         _uuid = SyphonCreateUUIDString();
         _size = size;
-        _texture = texture;
+        
+        NSDictionary* attribs = @{(NSString*)kIOSurfaceIsGlobal: @YES,
+                                  (NSString*)kIOSurfaceWidth: @(size.width),
+                                  (NSString*)kIOSurfaceHeight: @(size.height),
+                                  (NSString*)kIOSurfaceBytesPerElement: @4u};
+        
+        _ioSurface = IOSurfaceCreate((CFDictionaryRef)attribs);
+        
+        MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
+                                                                                        width:size.width
+                                                                                       height:size.height
+                                                                                    mipmapped:NO];
+        
+        _texture = [device newTextureWithDescriptor:desc iosurface:_ioSurface plane:0];
 
         _connection = [[SyphonServerConnectionManager alloc] initWithUUID:_uuid options:nil];
         if (![_connection start])
@@ -50,6 +62,7 @@ static void finalizer()
             [self release];
             return nil;
         }
+        [_connection setSurfaceID:IOSurfaceGetID(_ioSurface)];
         
         [[self class] addServerToRetireList:_uuid];
         [self startBroadcasts];        
@@ -65,8 +78,6 @@ static void finalizer()
         [_connection release];
         _connection = nil;
     }
-    
-    [self destroyIOSurface];
 
     [self stopBroadcasts];
     [[self class] removeServerFromRetireList:_uuid];
@@ -75,6 +86,8 @@ static void finalizer()
 - (void) dealloc
 {
     [self shutDownServer];
+    [_texture release];
+    CFRelease(_ioSurface);
     [_name release];
     [_uuid release];
     [super dealloc];
@@ -109,50 +122,13 @@ static void finalizer()
     [self shutDownServer];
 }
 
-- (void)updateFromRenderThread
+- (void)publishNewFrame
 {
-    if (!_ioSurface)
-    {
-        [self setupIOSurfaceForSize];
-        [_connection setSurfaceID:IOSurfaceGetID(_ioSurface)];
-    }
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_RECTANGLE, _texture2, 0);
     [_connection publishNewFrame];
-}
-
-- (void)unbound
-{
 }
 
 #pragma mark -
 #pragma mark Private methods
-
-#pragma mark FBO & IOSurface handling
-
-- (void) setupIOSurfaceForSize
-{
-    // init our texture and IOSurface
-    NSDictionary* surfaceAttributes = [[NSDictionary alloc] initWithObjectsAndKeys:[NSNumber numberWithBool:YES], (NSString*)kIOSurfaceIsGlobal,
-                                       [NSNumber numberWithUnsignedInteger:(NSUInteger)_size.width], (NSString*)kIOSurfaceWidth,
-                                       [NSNumber numberWithUnsignedInteger:(NSUInteger)_size.height], (NSString*)kIOSurfaceHeight,
-                                       [NSNumber numberWithUnsignedInteger:4U], (NSString*)kIOSurfaceBytesPerElement, nil];
-    
-    _ioSurface =  IOSurfaceCreate((CFDictionaryRef) surfaceAttributes);
-    [surfaceAttributes release];
-    
-    glGenTextures(1, &_texture2);
-    glBindTexture(GL_TEXTURE_RECTANGLE, _texture2);
-    CGLTexImageIOSurface2D(CGLGetCurrentContext(), GL_TEXTURE_RECTANGLE, GL_RGBA8, _size.width, _size.height, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, _ioSurface, 0);
-}
-
-- (void) destroyIOSurface
-{
-    if (!_ioSurface)
-    {
-        CFRelease(_ioSurface);
-        _ioSurface = NULL;
-    }
-}
 
 #pragma mark Notification Handling for Server Presence
 

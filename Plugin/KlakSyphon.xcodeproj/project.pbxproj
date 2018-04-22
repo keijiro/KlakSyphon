@@ -40,6 +40,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0F6F7306208CC95300BDCB7C /* IUnityGraphicsMetal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IUnityGraphicsMetal.h; sourceTree = "<group>"; };
 		0FEF483E2087696F001370CA /* KlakSyphon.bundle */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = KlakSyphon.bundle; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FEF48412087696F001370CA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0FEF48492087699F001370CA /* PluginEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PluginEntry.m; sourceTree = "<group>"; };
@@ -152,6 +153,7 @@
 			children = (
 				0FEF484E20876D05001370CA /* IUnityInterface.h */,
 				0FEF484F20876D05001370CA /* IUnityGraphics.h */,
+				0F6F7306208CC95300BDCB7C /* IUnityGraphicsMetal.h */,
 				0FEF485020876D05001370CA /* IUnityRenderingExtensions.h */,
 			);
 			path = Unity;
