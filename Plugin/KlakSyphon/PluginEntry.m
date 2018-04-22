@@ -1,6 +1,9 @@
 #import <Foundation/Foundation.h>
+#import <Metal/MTLTexture.h>
 #import "IUnityGraphicsMetal.h"
 #import "Syphon/LiteServer.h"
+#import "Syphon/LiteClient.h"
+#import "SyphonServerDirectory.h"
 
 static IUnityInterfaces* s_interfaces;
 static IUnityGraphicsMetal* s_graphics;
@@ -45,4 +48,42 @@ void* Klak_GetServerTexture(LiteServer* server)
 void Klak_PublishServerTexture(LiteServer* server)
 {
     [server publishNewFrame];
+}
+
+void* Klak_CreateClient(void)
+{
+    NSArray* servers = [[SyphonServerDirectory sharedDirectory] servers];
+    if (servers.count == 0) return NULL;
+    return [[LiteClient alloc] initWithServerDescription:servers[0]];
+}
+
+void Klak_DestroyClient(LiteClient* client)
+{
+    [client release];
+}
+
+void* Klak_GetClientTexture(LiteClient* client)
+{
+    return client.texture;
+}
+
+int Klak_GetClientTextureWidth(LiteClient* client)
+{
+    return (int)IOSurfaceGetWidth(client.texture.iosurface);
+}
+
+int Klak_GetClientTextureHeight(LiteClient* client)
+{
+    return (int)IOSurfaceGetHeight(client.texture.iosurface);
+}
+
+static void ClientUpdateCallback(int eventID, void* data)
+{
+    LiteClient* client = data;
+    [client updateFromRenderThread:GetMetalDevice()];
+}
+
+void* Klak_GetClientUpdateCallback(void)
+{
+    return ClientUpdateCallback;
 }

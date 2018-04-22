@@ -77,6 +77,7 @@
 	OSSpinLock _lock;
 }
 - (id)initWithServerDescription:(NSDictionary *)description;
+- (IOSurfaceRef)surfaceHavingLock;
 @property (readonly) BOOL isValid;
 - (void)addInfoClient:(id <SyphonInfoReceiving>)client isFrameClient:(BOOL)frameClient;     // Must be
 - (void)removeInfoClient:(id <SyphonInfoReceiving>)client isFrameClient:(BOOL)frameClient;  // paired

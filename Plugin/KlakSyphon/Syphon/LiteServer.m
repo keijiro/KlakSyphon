@@ -31,7 +31,8 @@ static void finalizer()
 
 - (id)init
 {
-    return [self initWithName:nil dimensions:NSZeroSize device:nil];
+    [self doesNotRecognizeSelector:_cmd];
+    return nil;
 }
 
 - (id)initWithName:(NSString*)name dimensions:(NSSize)size device:(id<MTLDevice>)device
@@ -70,7 +71,7 @@ static void finalizer()
     return self;
 }
 
-- (void) shutDownServer
+- (void) dealloc
 {
     if (_connection)
     {
@@ -78,18 +79,16 @@ static void finalizer()
         [_connection release];
         _connection = nil;
     }
-
+    
     [self stopBroadcasts];
     [[self class] removeServerFromRetireList:_uuid];
-}
 
-- (void) dealloc
-{
-    [self shutDownServer];
     [_texture release];
     CFRelease(_ioSurface);
+
     [_name release];
     [_uuid release];
+
     [super dealloc];
 }
 
@@ -115,11 +114,6 @@ static void finalizer()
             appName, SyphonServerDescriptionAppNameKey,
             [NSArray arrayWithObject:surface], SyphonServerDescriptionSurfacesKey,
             nil];
-}
-
-- (void)stop
-{
-    [self shutDownServer];
 }
 
 - (void)publishNewFrame
