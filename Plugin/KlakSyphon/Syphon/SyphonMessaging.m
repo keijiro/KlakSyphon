@@ -29,5 +29,4 @@
 
 #import "SyphonMessaging.h"
 
-//NSString * const SyphonMessagingProtocolMachMessage = @"SyphonMessagingProtocolMachMessage_v1";
 NSString * const SyphonMessagingProtocolCFMessage = @"SyphonMessagingProtocolCFMessage_v1";

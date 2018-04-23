@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		0F2A3642208CD27C0070362C /* LiteClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 0F2A3641208CD27C0070362C /* LiteClient.m */; };
 		0FEF484A2087699F001370CA /* PluginEntry.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF48492087699F001370CA /* PluginEntry.m */; };
-		0FEF488F20876D05001370CA /* SyphonMachMessageSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF485220876D05001370CA /* SyphonMachMessageSender.m */; };
 		0FEF489020876D05001370CA /* SyphonServerDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF485420876D05001370CA /* SyphonServerDirectory.m */; };
 		0FEF489220876D05001370CA /* SyphonMessageSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF485720876D05001370CA /* SyphonMessageSender.m */; };
 		0FEF489420876D05001370CA /* SyphonServerConnectionManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF485A20876D05001370CA /* SyphonServerConnectionManager.m */; };
@@ -21,7 +20,6 @@
 		0FEF489F20876D05001370CA /* LiteServer.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF487020876D05001370CA /* LiteServer.m */; };
 		0FEF48A320876D05001370CA /* SyphonMessageReceiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF487B20876D05001370CA /* SyphonMessageReceiver.m */; };
 		0FEF48A520876D05001370CA /* SyphonMessageQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF488020876D05001370CA /* SyphonMessageQueue.m */; };
-		0FEF48A820876D05001370CA /* SyphonMachMessageReceiver.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF488820876D05001370CA /* SyphonMachMessageReceiver.m */; };
 		0FEF48AB20876D05001370CA /* SyphonCFMessageSender.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FEF488E20876D05001370CA /* SyphonCFMessageSender.m */; };
 /* End PBXBuildFile section */
 
@@ -34,7 +32,6 @@
 		0FEF48492087699F001370CA /* PluginEntry.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PluginEntry.m; sourceTree = "<group>"; };
 		0FEF484E20876D05001370CA /* IUnityInterface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IUnityInterface.h; sourceTree = "<group>"; };
 		0FEF484F20876D05001370CA /* IUnityGraphics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IUnityGraphics.h; sourceTree = "<group>"; };
-		0FEF485220876D05001370CA /* SyphonMachMessageSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonMachMessageSender.m; sourceTree = "<group>"; };
 		0FEF485420876D05001370CA /* SyphonServerDirectory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonServerDirectory.m; sourceTree = "<group>"; };
 		0FEF485620876D05001370CA /* LiteServer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LiteServer.h; sourceTree = "<group>"; };
 		0FEF485720876D05001370CA /* SyphonMessageSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonMessageSender.m; sourceTree = "<group>"; };
@@ -47,11 +44,9 @@
 		0FEF486620876D05001370CA /* SyphonMessaging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonMessaging.m; sourceTree = "<group>"; };
 		0FEF486720876D05001370CA /* SyphonDispatch.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = SyphonDispatch.c; sourceTree = "<group>"; };
 		0FEF486820876D05001370CA /* SyphonCFMessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonCFMessageSender.h; sourceTree = "<group>"; };
-		0FEF486D20876D05001370CA /* SyphonMachMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonMachMessageReceiver.h; sourceTree = "<group>"; };
 		0FEF486E20876D05001370CA /* SyphonPrivate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonPrivate.m; sourceTree = "<group>"; };
 		0FEF487020876D05001370CA /* LiteServer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LiteServer.m; sourceTree = "<group>"; };
 		0FEF487320876D05001370CA /* SyphonServerDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonServerDirectory.h; sourceTree = "<group>"; };
-		0FEF487420876D05001370CA /* SyphonMachMessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonMachMessageSender.h; sourceTree = "<group>"; };
 		0FEF487520876D05001370CA /* SyphonBuildMacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonBuildMacros.h; sourceTree = "<group>"; };
 		0FEF487720876D05001370CA /* SyphonCFMessageReceiver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonCFMessageReceiver.h; sourceTree = "<group>"; };
 		0FEF487920876D05001370CA /* SyphonClientConnectionManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonClientConnectionManager.h; sourceTree = "<group>"; };
@@ -61,8 +56,6 @@
 		0FEF488120876D05001370CA /* SyphonMessageSender.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonMessageSender.h; sourceTree = "<group>"; };
 		0FEF488220876D05001370CA /* SyphonMessaging.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonMessaging.h; sourceTree = "<group>"; };
 		0FEF488320876D05001370CA /* SyphonDispatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonDispatch.h; sourceTree = "<group>"; };
-		0FEF488620876D05001370CA /* Syphon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Syphon.h; sourceTree = "<group>"; };
-		0FEF488820876D05001370CA /* SyphonMachMessageReceiver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonMachMessageReceiver.m; sourceTree = "<group>"; };
 		0FEF488920876D05001370CA /* SyphonPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SyphonPrivate.h; sourceTree = "<group>"; };
 		0FEF488E20876D05001370CA /* SyphonCFMessageSender.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SyphonCFMessageSender.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -123,7 +116,6 @@
 				0FEF485620876D05001370CA /* LiteServer.h */,
 				0FEF487020876D05001370CA /* LiteServer.m */,
 				0FEF485B20876D05001370CA /* Syphon_Prefix.pch */,
-				0FEF488620876D05001370CA /* Syphon.h */,
 				0FEF487520876D05001370CA /* SyphonBuildMacros.h */,
 				0FEF487720876D05001370CA /* SyphonCFMessageReceiver.h */,
 				0FEF486120876D05001370CA /* SyphonCFMessageReceiver.m */,
@@ -133,10 +125,6 @@
 				0FEF485F20876D05001370CA /* SyphonClientConnectionManager.m */,
 				0FEF486720876D05001370CA /* SyphonDispatch.c */,
 				0FEF488320876D05001370CA /* SyphonDispatch.h */,
-				0FEF486D20876D05001370CA /* SyphonMachMessageReceiver.h */,
-				0FEF488820876D05001370CA /* SyphonMachMessageReceiver.m */,
-				0FEF487420876D05001370CA /* SyphonMachMessageSender.h */,
-				0FEF485220876D05001370CA /* SyphonMachMessageSender.m */,
 				0FEF485820876D05001370CA /* SyphonMessageQueue.h */,
 				0FEF488020876D05001370CA /* SyphonMessageQueue.m */,
 				0FEF485E20876D05001370CA /* SyphonMessageReceiver.h */,
@@ -223,8 +211,6 @@
 			files = (
 				0FEF489420876D05001370CA /* SyphonServerConnectionManager.m in Sources */,
 				0FEF48A320876D05001370CA /* SyphonMessageReceiver.m in Sources */,
-				0FEF48A820876D05001370CA /* SyphonMachMessageReceiver.m in Sources */,
-				0FEF488F20876D05001370CA /* SyphonMachMessageSender.m in Sources */,
 				0FEF489620876D05001370CA /* SyphonClientConnectionManager.m in Sources */,
 				0F2A3642208CD27C0070362C /* LiteClient.m in Sources */,
 				0FEF489D20876D05001370CA /* SyphonPrivate.m in Sources */,

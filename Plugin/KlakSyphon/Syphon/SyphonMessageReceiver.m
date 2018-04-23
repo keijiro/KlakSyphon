@@ -30,7 +30,6 @@
 #import "SyphonMessageReceiver.h"
 #import "SyphonMessaging.h"
 #import "SyphonCFMessageReceiver.h"
-//#import "SyphonMachMessageReceiver.h"
 
 @implementation SyphonMessageReceiver
 - (id)initForName:(NSString *)name protocol:(NSString *)protocolName handler:(void (^)(id payload, uint32_t type))handler
@@ -45,12 +44,6 @@
 			{
                 return [[SyphonCFMessageReceiver alloc] initForName:name protocol:protocolName handler:handler];
             }
-			/*
-			else if ([protocolName isEqualToString:SyphonMessagingProtocolMachMessage])
-			{
-                return [[SyphonMessageReceiverMachMessage alloc] initForName:name protocol:protocolName handler:handler];
-            }
-			 */
 			else
 			{
 			    return nil;

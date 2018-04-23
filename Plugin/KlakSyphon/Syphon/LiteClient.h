@@ -1,5 +1,3 @@
-#import <Foundation/Foundation.h>
-
 @protocol MTLDevice;
 @protocol MTLTexture;
 
@@ -7,7 +5,7 @@
 
 @property (readonly) id<MTLTexture> texture;
 
-- (id)initWithServerDescription:(NSDictionary *)description;
+- (id)initWithServerDescription:(NSDictionary*)description;
 - (void)updateFromRenderThread:(id<MTLDevice>)device;
 
 @end

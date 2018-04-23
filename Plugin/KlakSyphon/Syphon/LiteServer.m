@@ -1,5 +1,4 @@
 #import "LiteServer.h"
-#import "SyphonPrivate.h"
 #import "SyphonServerConnectionManager.h"
 #import <Metal/MTLDevice.h>
 #import <Metal/MTLTexture.h>

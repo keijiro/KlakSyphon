@@ -1,9 +1,10 @@
-#import <Foundation/Foundation.h>
 #import <Metal/MTLTexture.h>
-#import "IUnityGraphicsMetal.h"
+#import "SyphonServerDirectory.h"
 #import "Syphon/LiteServer.h"
 #import "Syphon/LiteClient.h"
-#import "SyphonServerDirectory.h"
+#import "IUnityGraphicsMetal.h"
+
+#pragma mark Device interface retrieval
 
 static IUnityInterfaces* s_interfaces;
 static IUnityGraphicsMetal* s_graphics;
@@ -24,6 +25,8 @@ void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload(void)
     s_interfaces = NULL;
     s_graphics = NULL;
 }
+
+#pragma mark - Plugin server functions
 
 LiteServer* Klak_CreateServer(const char* cname, int width, int height)
 {
@@ -49,6 +52,8 @@ void Klak_PublishServerTexture(LiteServer* server)
 {
     [server publishNewFrame];
 }
+
+#pragma mark - Plugin client functions
 
 void* Klak_CreateClient(void)
 {
