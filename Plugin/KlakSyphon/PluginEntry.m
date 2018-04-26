@@ -31,7 +31,7 @@ void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload(void)
 LiteServer *Klak_CreateServer(const char *cname, int width, int height)
 {
     NSString *name = [NSString stringWithUTF8String:cname];
-    SYPHONLOG(@"CreateServer (%@, %d, %d)", name, width, height);
+    NSLog(@"KlakSyphon: CreateServer (%@, %d, %d)", name, width, height);
     return [[LiteServer alloc] initWithName:name
                                  dimensions:NSMakeSize(width, height)
                                      device:GetMetalDevice()];
@@ -39,7 +39,7 @@ LiteServer *Klak_CreateServer(const char *cname, int width, int height)
 
 void Klak_DestroyServer(LiteServer *server)
 {
-    SYPHONLOG(@"DestroyServer (%p)", server);
+    NSLog(@"KlakSyphon: DestroyServer (%p)", server);
     [server release];
 }
 
