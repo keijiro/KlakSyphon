@@ -6,8 +6,8 @@
 
 #pragma mark Device interface retrieval
 
-static IUnityInterfaces* s_interfaces;
-static IUnityGraphicsMetal* s_graphics;
+static IUnityInterfaces *s_interfaces;
+static IUnityGraphicsMetal *s_graphics;
 
 static id<MTLDevice> GetMetalDevice()
 {
@@ -15,7 +15,7 @@ static id<MTLDevice> GetMetalDevice()
     return s_graphics ? s_graphics->MetalDevice() : nil;
 }
 
-void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginLoad(IUnityInterfaces* interfaces)
+void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginLoad(IUnityInterfaces *interfaces)
 {
     s_interfaces = interfaces;
 }
@@ -28,67 +28,67 @@ void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload(void)
 
 #pragma mark - Plugin server functions
 
-LiteServer* Klak_CreateServer(const char* cname, int width, int height)
+LiteServer *Klak_CreateServer(const char *cname, int width, int height)
 {
-    NSString* name = [NSString stringWithUTF8String:cname];
+    NSString *name = [NSString stringWithUTF8String:cname];
     SYPHONLOG(@"CreateServer (%@, %d, %d)", name, width, height);
     return [[LiteServer alloc] initWithName:name
                                  dimensions:NSMakeSize(width, height)
                                      device:GetMetalDevice()];
 }
 
-void Klak_DestroyServer(LiteServer* server)
+void Klak_DestroyServer(LiteServer *server)
 {
     SYPHONLOG(@"DestroyServer (%p)", server);
     [server release];
 }
 
-void* Klak_GetServerTexture(LiteServer* server)
+void *Klak_GetServerTexture(LiteServer *server)
 {
     return server.texture;
 }
 
-void Klak_PublishServerTexture(LiteServer* server)
+void Klak_PublishServerTexture(LiteServer *server)
 {
     [server publishNewFrame];
 }
 
 #pragma mark - Plugin client functions
 
-void* Klak_CreateClient(void)
+void *Klak_CreateClient(void)
 {
-    NSArray* servers = [[SyphonServerDirectory sharedDirectory] servers];
+    NSArray *servers = [[SyphonServerDirectory sharedDirectory] servers];
     if (servers.count == 0) return NULL;
     return [[LiteClient alloc] initWithServerDescription:servers[0]];
 }
 
-void Klak_DestroyClient(LiteClient* client)
+void Klak_DestroyClient(LiteClient *client)
 {
     [client release];
 }
 
-void* Klak_GetClientTexture(LiteClient* client)
+void* Klak_GetClientTexture(LiteClient *client)
 {
     return client.texture;
 }
 
-int Klak_GetClientTextureWidth(LiteClient* client)
+int Klak_GetClientTextureWidth(LiteClient *client)
 {
     return (int)IOSurfaceGetWidth(client.texture.iosurface);
 }
 
-int Klak_GetClientTextureHeight(LiteClient* client)
+int Klak_GetClientTextureHeight(LiteClient *client)
 {
     return (int)IOSurfaceGetHeight(client.texture.iosurface);
 }
 
-static void ClientUpdateCallback(int eventID, void* data)
+static void ClientUpdateCallback(int eventID, void *data)
 {
-    LiteClient* client = data;
+    LiteClient *client = data;
     [client updateFromRenderThread:GetMetalDevice()];
 }
 
-void* Klak_GetClientUpdateCallback(void)
+void *Klak_GetClientUpdateCallback(void)
 {
     return ClientUpdateCallback;
 }

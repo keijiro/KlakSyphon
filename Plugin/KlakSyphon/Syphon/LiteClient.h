@@ -3,9 +3,9 @@
 
 @interface LiteClient : NSObject
 
-@property (readonly) id<MTLTexture> texture;
+@property (readonly) id <MTLTexture> texture;
 
-- (id)initWithServerDescription:(NSDictionary*)description;
-- (void)updateFromRenderThread:(id<MTLDevice>)device;
+- (id)initWithServerDescription:(NSDictionary *)description;
+- (void)updateFromRenderThread:(id <MTLDevice>)device;
 
 @end

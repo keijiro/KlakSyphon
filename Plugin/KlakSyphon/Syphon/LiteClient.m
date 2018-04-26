@@ -3,10 +3,10 @@
 #import <Metal/MTLDevice.h>
 #import <Metal/MTLTexture.h>
 
-@interface LiteClient()
+@interface LiteClient() <SyphonInfoReceiving>
 {
-    SyphonClientConnectionManager* _connection;
-    id<MTLTexture> _texture;
+    SyphonClientConnectionManager *_connection;
+    id <MTLTexture> _texture;
 }
 @end
 
@@ -28,14 +28,14 @@
             [self release];
             return nil;
         }
-        [_connection addInfoClient:(id<SyphonInfoReceiving>)self isFrameClient:NO];
+        [_connection addInfoClient:self isFrameClient:NO];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [_connection removeInfoClient:(id<SyphonInfoReceiving>)self isFrameClient:NO];
+    [_connection removeInfoClient:self isFrameClient:NO];
     [_connection release];
     if (_texture) [_texture release];
     [super dealloc];
@@ -45,7 +45,7 @@
 {
 }
 
-- (void)updateFromRenderThread:(id<MTLDevice>)device
+- (void)updateFromRenderThread:(id <MTLDevice>)device
 {
     IOSurfaceRef surface = [_connection surfaceHavingLock];
 
