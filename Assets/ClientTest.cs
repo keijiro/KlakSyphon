@@ -1,10 +1,14 @@
-﻿using System;
+﻿// Syphon client test
+
+using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class ClientTest : MonoBehaviour
 {
+    #region Native plugin entry points
+
     [DllImport("KlakSyphon")]
     static extern IntPtr Klak_CreateClient();
 
@@ -23,12 +27,23 @@ public class ClientTest : MonoBehaviour
     [DllImport("KlakSyphon")]
     static extern IntPtr Klak_GetClientUpdateCallback();
 
+    #endregion
+
+    #region Editable attributes
+
     [SerializeField] Renderer _renderer;
+
+    #endregion
+
+    #region Private variables
 
     IntPtr _clientInstance;
     Texture _clientTexture;
-
     CommandBuffer _updateCommand;
+
+    #endregion
+
+    #region MonoBehaviour implementation
 
     void Start()
     {
@@ -48,21 +63,21 @@ public class ClientTest : MonoBehaviour
 
         if (_clientInstance != IntPtr.Zero)
         {
-            var ctex = Klak_GetClientTexture(_clientInstance);
+            var pluginTexture = Klak_GetClientTexture(_clientInstance);
 
-            if (_clientTexture != null && _clientTexture.GetNativeTexturePtr() != ctex)
+            if (_clientTexture != null &&
+                _clientTexture.GetNativeTexturePtr() != pluginTexture)
             {
                 Destroy(_clientTexture);
                 _clientTexture = null;
             }
 
-            if (_clientTexture == null && ctex != IntPtr.Zero)
+            if (_clientTexture == null && pluginTexture != IntPtr.Zero)
             {
                 _clientTexture = Texture2D.CreateExternalTexture(
                     Klak_GetClientTextureWidth(_clientInstance),
                     Klak_GetClientTextureHeight(_clientInstance),
-                    TextureFormat.RGBA32, false, false,
-                    ctex
+                    TextureFormat.RGBA32, false, false, pluginTexture
                 );
                 _renderer.material.mainTexture = _clientTexture;
             }
@@ -75,4 +90,6 @@ public class ClientTest : MonoBehaviour
             Graphics.ExecuteCommandBuffer(_updateCommand);
         }
     }
+
+    #endregion
 }

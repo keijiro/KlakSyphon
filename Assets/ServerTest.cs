@@ -1,10 +1,13 @@
-﻿using System;
+﻿// Syphon server test
+
+using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
-using UnityEngine.Rendering;
 
-public class Tester : MonoBehaviour
+public class ServerTest : MonoBehaviour
 {
+    #region Native plugin entry points
+
     [DllImport("KlakSyphon")]
     private static extern IntPtr Klak_CreateServer(string name, int width, int height);
 
@@ -17,10 +20,16 @@ public class Tester : MonoBehaviour
     [DllImport("KlakSyphon")]
     private static extern void Klak_PublishServerTexture(IntPtr instance);
 
-    [SerializeField] Material _material;
+    #endregion
+
+    #region Private variables
 
     IntPtr _serverInstance;
     Texture _serverTexture;
+
+    #endregion
+
+    #region MonoBehaviour implementation
 
     void Start()
     {
@@ -45,10 +54,18 @@ public class Tester : MonoBehaviour
 
     void OnRenderImage(RenderTexture source, RenderTexture dest)
     {
-        var temp = RenderTexture.GetTemporary(512, 512, 0, RenderTextureFormat.Default, RenderTextureReadWrite.Linear);
+        var temp = RenderTexture.GetTemporary(
+            _serverTexture.width, _serverTexture.height, 0,
+            RenderTextureFormat.Default, RenderTextureReadWrite.Linear
+        );
+
         Graphics.Blit(source, temp);
         Graphics.CopyTexture(temp, _serverTexture);
+
         RenderTexture.ReleaseTemporary(temp);
+
         Graphics.Blit(source, dest);
     }
+
+    #endregion
 }
