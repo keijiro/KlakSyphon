@@ -20,6 +20,11 @@ namespace Klak.Syphon
 
         void Start()
         {
+            if (QualitySettings.activeColorSpace == ColorSpace.Linear)
+                Plugin_EnableColorSpaceConversion();
+            else
+                Plugin_DisableColorSpaceConversion();
+
             _serverInstance = Plugin_CreateServer("Test", 512, 512);
 
             _serverTexture = Texture2D.CreateExternalTexture(
@@ -43,7 +48,7 @@ namespace Klak.Syphon
         {
             var temp = RenderTexture.GetTemporary(
                 _serverTexture.width, _serverTexture.height, 0,
-                RenderTextureFormat.Default, RenderTextureReadWrite.Linear
+                RenderTextureFormat.Default, RenderTextureReadWrite.Default
             );
 
             Graphics.Blit(source, temp);
@@ -69,6 +74,12 @@ namespace Klak.Syphon
 
         [DllImport("KlakSyphon")]
         private static extern void Plugin_PublishServerTexture(IntPtr instance);
+
+        [DllImport("KlakSyphon")]
+        private static extern void Plugin_EnableColorSpaceConversion();
+
+        [DllImport("KlakSyphon")]
+        private static extern void Plugin_DisableColorSpaceConversion();
 
         #endregion
     }
