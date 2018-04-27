@@ -12,8 +12,8 @@ namespace Klak.Syphon
     {
         #region Editable attributes
 
-        [SerializeField] string _appNameFilter;
-        [SerializeField] string _nameFilter;
+        [SerializeField] string _appName;
+        [SerializeField] string _name;
         [SerializeField] Renderer _renderer;
 
         #endregion
@@ -43,7 +43,7 @@ namespace Klak.Syphon
         void Update()
         {
             if (_clientInstance == IntPtr.Zero)
-                _clientInstance = Plugin_CreateClient(_nameFilter, _appNameFilter);
+                _clientInstance = Plugin_CreateClient(_name, _appName);
 
             if (_clientInstance != IntPtr.Zero)
             {

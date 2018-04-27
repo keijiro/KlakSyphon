@@ -51,6 +51,16 @@ void Plugin_PublishServerTexture(LiteServer *server)
     [server publishNewFrame];
 }
 
+void Plugin_EnableColorSpaceConversion(void)
+{
+    LiteServer.shouldConvertColorSpace = YES;
+}
+
+void Plugin_DisableColorSpaceConversion(void)
+{
+    LiteServer.shouldConvertColorSpace = NO;
+}
+
 #pragma mark - Plugin client functions
 
 void *Plugin_CreateClient(const char *name, const char *appName)

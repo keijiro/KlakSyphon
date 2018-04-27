@@ -18,6 +18,22 @@
 
 @implementation LiteServer
 
+#pragma mark - Class property
+
+static BOOL _shouldConvertColorSpace;
+
++ (void)setShouldConvertColorSpace:(BOOL)flag
+{
+    _shouldConvertColorSpace = flag;
+}
+
++ (BOOL)shouldConvertColorSpace
+{
+    return _shouldConvertColorSpace;
+}
+
+#pragma mark - Object allocation/deallocation
+
 - (id)init
 {
     [self doesNotRecognizeSelector:_cmd];
@@ -37,7 +53,8 @@
                                    (NSString *)kIOSurfaceBytesPerElement: @4u };
         _ioSurface = IOSurfaceCreate((CFDictionaryRef)attribs);
 
-        MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
+        MTLPixelFormat format = _shouldConvertColorSpace ? MTLPixelFormatBGRA8Unorm_sRGB : MTLPixelFormatBGRA8Unorm;
+        MTLTextureDescriptor *desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:format
                                                                                         width:size.width
                                                                                        height:size.height
                                                                                     mipmapped:NO];

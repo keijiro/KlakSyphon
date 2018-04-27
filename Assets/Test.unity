@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 1396357930}
   - component: {fileID: 1396357929}
   m_Layer: 0
-  m_Name: Quad
+  m_Name: Test Card
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -214,8 +214,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79770b2944d4cdeb52083e0a22da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _appNameFilter: Simple Server
-  _nameFilter: 
+  _appName: Simple Server
+  _name: 
   _renderer: {fileID: 1823015632}
 --- !u!23 &1823015632
 MeshRenderer:
