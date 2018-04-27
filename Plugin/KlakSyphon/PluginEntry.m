@@ -9,7 +9,7 @@
 static IUnityInterfaces *s_interfaces;
 static IUnityGraphicsMetal *s_graphics;
 
-static id<MTLDevice> GetMetalDevice()
+static id <MTLDevice> GetMetalDevice()
 {
     if (!s_graphics) s_graphics = UNITY_GET_INTERFACE(s_interfaces, IUnityGraphicsMetal);
     return s_graphics ? s_graphics->MetalDevice() : nil;
@@ -28,56 +28,56 @@ void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload(void)
 
 #pragma mark - Plugin server functions
 
-LiteServer *Klak_CreateServer(const char *cname, int width, int height)
+LiteServer *Plugin_CreateServer(const char *cname, int width, int height)
 {
     NSString *name = [NSString stringWithUTF8String:cname];
-    NSLog(@"KlakSyphon: CreateServer (%@, %d, %d)", name, width, height);
     return [[LiteServer alloc] initWithName:name
                                  dimensions:NSMakeSize(width, height)
                                      device:GetMetalDevice()];
 }
 
-void Klak_DestroyServer(LiteServer *server)
+void Plugin_DestroyServer(LiteServer *server)
 {
-    NSLog(@"KlakSyphon: DestroyServer (%p)", server);
     [server release];
 }
 
-void *Klak_GetServerTexture(LiteServer *server)
+void *Plugin_GetServerTexture(LiteServer *server)
 {
     return server.texture;
 }
 
-void Klak_PublishServerTexture(LiteServer *server)
+void Plugin_PublishServerTexture(LiteServer *server)
 {
     [server publishNewFrame];
 }
 
 #pragma mark - Plugin client functions
 
-void *Klak_CreateClient(void)
+void *Plugin_CreateClient(const char *name, const char *appName)
 {
-    NSArray *servers = [[SyphonServerDirectory sharedDirectory] servers];
+    SyphonServerDirectory *dir = SyphonServerDirectory.sharedDirectory;
+    NSArray *servers = [dir serversMatchingName:[NSString stringWithUTF8String:name]
+                                        appName:[NSString stringWithUTF8String:appName]];
     if (servers.count == 0) return NULL;
     return [[LiteClient alloc] initWithServerDescription:servers[0]];
 }
 
-void Klak_DestroyClient(LiteClient *client)
+void Plugin_DestroyClient(LiteClient *client)
 {
     [client release];
 }
 
-void* Klak_GetClientTexture(LiteClient *client)
+void *Plugin_GetClientTexture(LiteClient *client)
 {
     return client.texture;
 }
 
-int Klak_GetClientTextureWidth(LiteClient *client)
+int Plugin_GetClientTextureWidth(LiteClient *client)
 {
     return (int)IOSurfaceGetWidth(client.texture.iosurface);
 }
 
-int Klak_GetClientTextureHeight(LiteClient *client)
+int Plugin_GetClientTextureHeight(LiteClient *client)
 {
     return (int)IOSurfaceGetHeight(client.texture.iosurface);
 }
@@ -88,7 +88,36 @@ static void ClientUpdateCallback(int eventID, void *data)
     [client updateFromRenderThread:GetMetalDevice()];
 }
 
-void *Klak_GetClientUpdateCallback(void)
+void *Plugin_GetClientUpdateCallback(void)
 {
     return ClientUpdateCallback;
+}
+
+#pragma mark - Plugin server directory functions
+
+NSArray *Plugin_CreateServerList()
+{
+    return [SyphonServerDirectory.sharedDirectory.servers retain];
+}
+
+void Plugin_DestroyServerList(NSArray *list)
+{
+    [list release];
+}
+
+int Plugin_GetServerListCount(NSArray *list)
+{
+    return (int)list.count;
+}
+
+const void *Plugin_GetNameFromServerList(NSArray *list, int index)
+{
+    NSString *name = list[index][SyphonServerDescriptionNameKey];
+    return name && name.length > 0 ? name.UTF8String : NULL;
+}
+
+const void *Plugin_GetAppNameFromServerList(NSArray *list, int index)
+{
+    NSString *name = list[index][SyphonServerDescriptionAppNameKey];
+    return name && name.length > 0 ? name.UTF8String : NULL;
 }

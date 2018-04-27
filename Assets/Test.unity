@@ -142,6 +142,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79770b2944d4cdeb52083e0a22da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _nameFilter: 
+  _appNameFilter: Simple Server
   _renderer: {fileID: 1823015632}
 --- !u!23 &1823015632
 MeshRenderer:
@@ -4926,4 +4928,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59ae4f317f9b4f8b8d64f71768aaea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _material: {fileID: 2100000, guid: 5c94f9100be8b48b99cd75770fbbdefc, type: 2}
