@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sourceTexture: {fileID: 8400000, guid: 8d0af5aa1aaed4323a2f0bcc6fd4bd48, type: 2}
-  _clearAlpha: 1
+  _alphaSupport: 0
   _blitShader: {fileID: 4800000, guid: 1357bcacfdfbc48b290065349adbfb93, type: 3}
 --- !u!4 &1615283081
 Transform:
@@ -258,8 +258,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _appName: Simple Server
-  _name: 
-  _renderer: {fileID: 1823015632}
+  _serverName: 
+  _targetTexture: {fileID: 0}
+  _targetRenderer: {fileID: 1823015632}
+  _targetMaterialProperty: _MainTex
 --- !u!23 &1823015632
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5044,5 +5046,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sourceTexture: {fileID: 0}
-  _clearAlpha: 1
+  _alphaSupport: 0
   _blitShader: {fileID: 4800000, guid: 1357bcacfdfbc48b290065349adbfb93, type: 3}
