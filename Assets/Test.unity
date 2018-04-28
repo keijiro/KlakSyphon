@@ -262,6 +262,7 @@ MonoBehaviour:
   _targetTexture: {fileID: 0}
   _targetRenderer: {fileID: 1823015632}
   _targetMaterialProperty: _MainTex
+  _nullTexture: {fileID: 2800000, guid: 4d452f854bc6b43488690d49f3cd2e9c, type: 3}
 --- !u!23 &1823015632
 MeshRenderer:
   m_ObjectHideFlags: 0

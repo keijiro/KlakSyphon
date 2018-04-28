@@ -63,6 +63,8 @@ namespace Klak.Syphon
 
         #region Private variables
 
+        [SerializeField] Texture _nullTexture;
+
         IntPtr _clientInstance;
         Texture _clientTexture;
         CommandBuffer _updateCommand;
@@ -88,6 +90,14 @@ namespace Klak.Syphon
                     Destroy(_clientTexture);
                 else
                     DestroyImmediate(_clientTexture);
+
+                // Cancel texture use in the target renderer.
+                if (_targetRenderer != null && _propertyBlock != null)
+                {
+                    _targetRenderer.GetPropertyBlock(_propertyBlock);
+                    _propertyBlock.SetTexture(_targetMaterialProperty, _nullTexture);
+                    _targetRenderer.SetPropertyBlock(_propertyBlock);
+                }
             }
         }
 
@@ -105,6 +115,23 @@ namespace Klak.Syphon
 
             // Break and return if there is no connection at this point.
             if (_clientInstance == IntPtr.Zero) return;
+
+            // If the client has been invalidated, destroy it.
+            if (!Plugin_IsClientValid(_clientInstance))
+            {
+                OnDisable();
+                return;
+            }
+
+            // Issue the plugin update event.
+            if (_updateCommand == null) _updateCommand = new CommandBuffer();
+
+            _updateCommand.Clear();
+            _updateCommand.IssuePluginEventAndData(
+                Plugin_GetClientUpdateCallback(), 0, _clientInstance
+            );
+
+            Graphics.ExecuteCommandBuffer(_updateCommand);
 
             // Retrieve the native texture pointer from the client.
             var nativeTexture = Plugin_GetClientTexture(_clientInstance);
@@ -127,29 +154,30 @@ namespace Klak.Syphon
                 );
             }
 
-            // Issue the plugin update event.
-            if (_updateCommand == null) _updateCommand = new CommandBuffer();
-
-            _updateCommand.Clear();
-            _updateCommand.IssuePluginEventAndData(
-                Plugin_GetClientUpdateCallback(), 0, _clientInstance
-            );
-
-            Graphics.ExecuteCommandBuffer(_updateCommand);
-
-            // Break and return if not client texture is ready.
-            if (_clientTexture == null) return;
-
-            // Update external objects.
-            if (_targetTexture != null)
-                Graphics.Blit(_clientTexture, _targetTexture);
-
-            if (_targetRenderer != null)
+            if (_clientTexture != null)
             {
-                if (_propertyBlock == null) _propertyBlock = new MaterialPropertyBlock();
-                _targetRenderer.GetPropertyBlock(_propertyBlock);
-                _propertyBlock.SetTexture(_targetMaterialProperty, receivedTexture);
-                _targetRenderer.SetPropertyBlock(_propertyBlock);
+                // Blit to the target render texture.
+                if (_targetTexture != null)
+                    Graphics.Blit(_clientTexture, _targetTexture);
+
+                // Override the target renderer material.
+                if (_targetRenderer != null)
+                {
+                    if (_propertyBlock == null) _propertyBlock = new MaterialPropertyBlock();
+                    _targetRenderer.GetPropertyBlock(_propertyBlock);
+                    _propertyBlock.SetTexture(_targetMaterialProperty, _clientTexture);
+                    _targetRenderer.SetPropertyBlock(_propertyBlock);
+                }
+            }
+            else
+            {
+                // No texture ready: Cancel material overriding.
+                if (_targetRenderer != null && _propertyBlock != null)
+                {
+                    _targetRenderer.GetPropertyBlock(_propertyBlock);
+                    _propertyBlock.SetTexture(_targetMaterialProperty, _nullTexture);
+                    _targetRenderer.SetPropertyBlock(_propertyBlock);
+                }
             }
         }
 
@@ -162,6 +190,9 @@ namespace Klak.Syphon
 
         [DllImport("KlakSyphon")]
         static extern void Plugin_DestroyClient(IntPtr instance);
+
+        [DllImport("KlakSyphon")]
+        static extern bool Plugin_IsClientValid(IntPtr instance);
 
         [DllImport("KlakSyphon")]
         static extern IntPtr Plugin_GetClientTexture(IntPtr instance);

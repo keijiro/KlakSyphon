@@ -77,6 +77,11 @@ void Plugin_DestroyClient(LiteClient *client)
     [client release];
 }
 
+int Plugin_IsClientValid(LiteClient *client)
+{
+    return client.isValid ? 1 : 0;
+}
+
 void *Plugin_GetClientTexture(LiteClient *client)
 {
     return client.texture;
