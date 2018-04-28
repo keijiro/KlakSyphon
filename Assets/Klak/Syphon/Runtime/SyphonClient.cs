@@ -99,6 +99,7 @@ namespace Klak.Syphon
                     Destroy(_clientTexture);
                 else
                     DestroyImmediate(_clientTexture);
+                _clientTexture = null;
 
                 // Cancel texture use in the target renderer.
                 if (_targetRenderer != null && _propertyBlock != null)
@@ -149,7 +150,10 @@ namespace Klak.Syphon
             if (_clientTexture != null &&
                 _clientTexture.GetNativeTexturePtr() != nativeTexture)
             {
-                Destroy(_clientTexture);
+                if (Application.isPlaying)
+                    Destroy(_clientTexture);
+                else
+                    DestroyImmediate(_clientTexture);
                 _clientTexture = null;
             }
 
