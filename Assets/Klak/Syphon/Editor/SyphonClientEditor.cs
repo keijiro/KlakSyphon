@@ -8,6 +8,7 @@ using System.Collections.Generic;
 
 namespace Klak.Syphon
 {
+    [CanEditMultipleObjects]
     [CustomEditor(typeof(SyphonClient))]
     public class SyphonClientEditor : Editor
     {
@@ -104,8 +105,16 @@ namespace Klak.Syphon
         {
             serializedObject.Update();
 
-            EditorGUILayout.PropertyField(_appName);
-            EditorGUILayout.PropertyField(_serverName);
+            EditorGUI.BeginChangeCheck();
+
+            EditorGUILayout.DelayedTextField(_appName);
+            EditorGUILayout.DelayedTextField(_serverName);
+
+            // Force reconnection on modification to name properties.
+            if (EditorGUI.EndChangeCheck())
+                foreach (MonoBehaviour client in targets)
+                    client.SendMessage("OnDisable");
+
             EditorGUILayout.PropertyField(_targetTexture);
             EditorGUILayout.PropertyField(_targetRenderer);
 

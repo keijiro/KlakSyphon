@@ -8,6 +8,7 @@ using UnityEngine.Rendering;
 
 namespace Klak.Syphon
 {
+    [ExecuteInEditMode]
     public class SyphonClient : MonoBehaviour
     {
         #region Source settings
@@ -16,14 +17,22 @@ namespace Klak.Syphon
 
         public string appName {
             get { return _appName; }
-            set { _appName = value; }
+            set {
+                if (_appName == value) return;
+                _appName = value;
+                OnDisable(); // Force reconnection
+            }
         }
 
         [SerializeField] string _serverName;
 
         public string serverName {
             get { return _serverName; }
-            set { _serverName = value; }
+            set {
+                if (_serverName == value) return;
+                _serverName = value;
+                OnDisable(); // Force reconnection
+            }
         }
 
         #endregion
@@ -104,7 +113,7 @@ namespace Klak.Syphon
         void OnDestroy()
         {
             // Dispose the internal objects.
-            _updateCommand.Dispose();
+            if (_updateCommand != null) _updateCommand.Dispose();
         }
 
         void Update()
