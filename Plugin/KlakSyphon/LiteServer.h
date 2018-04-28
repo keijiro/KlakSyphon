@@ -1,3 +1,8 @@
+// KlakSyphon - Syphon plugin for Unity
+// https://github.com/keijiro/KlakSyphon
+
+// LiteServer: Simplified implementation of Syphon server
+
 @protocol MTLDevice;
 @protocol MTLTexture;
 

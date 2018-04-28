@@ -1,7 +1,12 @@
+// KlakSyphon - Syphon plugin for Unity
+// https://github.com/keijiro/KlakSyphon
+
+// Unity native plugin entry points
+
 #import <Metal/MTLTexture.h>
 #import "SyphonServerDirectory.h"
-#import "Syphon/LiteServer.h"
-#import "Syphon/LiteClient.h"
+#import "LiteServer.h"
+#import "LiteClient.h"
 #import "IUnityGraphicsMetal.h"
 
 #pragma mark Device interface retrieval

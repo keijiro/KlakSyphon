@@ -1,3 +1,8 @@
+// KlakSyphon - Syphon plugin for Unity
+// https://github.com/keijiro/KlakSyphon
+
+// LiteServer: Simplified implementation of Syphon server
+
 #import "LiteServer.h"
 #import "SyphonServerConnectionManager.h"
 #import <Metal/MTLDevice.h>

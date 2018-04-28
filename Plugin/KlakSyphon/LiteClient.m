@@ -1,3 +1,8 @@
+// KlakSyphon - Syphon plugin for Unity
+// https://github.com/keijiro/KlakSyphon
+
+// LiteClient: Simplified implementation of Syphon client
+
 #import "LiteClient.h"
 #import "SyphonClientConnectionManager.h"
 #import <Metal/MTLDevice.h>
