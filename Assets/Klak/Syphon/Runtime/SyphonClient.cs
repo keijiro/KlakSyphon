@@ -76,7 +76,6 @@ namespace Klak.Syphon
 
         IntPtr _clientInstance;
         Texture _clientTexture;
-        CommandBuffer _updateCommand;
         MaterialPropertyBlock _propertyBlock;
 
         #endregion
@@ -111,12 +110,6 @@ namespace Klak.Syphon
             }
         }
 
-        void OnDestroy()
-        {
-            // Dispose the internal objects.
-            if (_updateCommand != null) _updateCommand.Dispose();
-        }
-
         void Update()
         {
             // If we have no connection yet, keep trying to connect to the server.
@@ -133,15 +126,8 @@ namespace Klak.Syphon
                 return;
             }
 
-            // Issue the plugin update event.
-            if (_updateCommand == null) _updateCommand = new CommandBuffer();
-
-            _updateCommand.Clear();
-            _updateCommand.IssuePluginEventAndData(
-                Plugin_GetClientUpdateCallback(), 0, _clientInstance
-            );
-
-            Graphics.ExecuteCommandBuffer(_updateCommand);
+            // Update the client.
+            Plugin_UpdateClient(_clientInstance);
 
             // Retrieve the native texture pointer from the client.
             var nativeTexture = Plugin_GetClientTexture(_clientInstance);
@@ -217,7 +203,7 @@ namespace Klak.Syphon
         static extern int Plugin_GetClientTextureHeight(IntPtr instance);
 
         [DllImport("KlakSyphon")]
-        static extern IntPtr Plugin_GetClientUpdateCallback();
+        static extern void Plugin_UpdateClient(IntPtr instance);
 
         #endregion
     }

@@ -7,7 +7,6 @@
 {
     SyphonClientConnectionManager *_connection;
     id <MTLTexture> _texture;
-    id <MTLTexture> _textureToDestroy;
 }
 @end
 
@@ -39,7 +38,6 @@
     [_connection removeInfoClient:self isFrameClient:NO];
     [_connection release];
     if (_texture) [_texture release];
-    if (_textureToDestroy) [_textureToDestroy release];
     [super dealloc];
 }
 
@@ -52,21 +50,15 @@
 {
 }
 
-- (void)updateFromRenderThread:(id <MTLDevice>)device
+- (void)updateWithDevice:(id<MTLDevice>)device
 {
     IOSurfaceRef surface = [_connection surfaceHavingLock];
-    
-    if (_textureToDestroy)
-    {
-        [_textureToDestroy release];
-        _textureToDestroy = nil;
-    }
 
     if (_texture)
     {
         if (_texture.iosurface != surface)
         {
-            _textureToDestroy = _texture;
+            [_texture release];
             _texture = nil;
         }
     }

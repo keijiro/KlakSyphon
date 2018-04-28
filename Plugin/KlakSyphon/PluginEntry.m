@@ -97,15 +97,9 @@ int Plugin_GetClientTextureHeight(LiteClient *client)
     return (int)IOSurfaceGetHeight(client.texture.iosurface);
 }
 
-static void ClientUpdateCallback(int eventID, void *data)
+void Plugin_UpdateClient(LiteClient *client)
 {
-    LiteClient *client = data;
-    [client updateFromRenderThread:GetMetalDevice()];
-}
-
-void *Plugin_GetClientUpdateCallback(void)
-{
-    return ClientUpdateCallback;
+    [client updateWithDevice:GetMetalDevice()];
 }
 
 #pragma mark - Plugin server directory functions

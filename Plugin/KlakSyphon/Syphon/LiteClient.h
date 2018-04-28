@@ -7,6 +7,6 @@
 @property (readonly) BOOL isValid;
 
 - (id)initWithServerDescription:(NSDictionary *)description;
-- (void)updateFromRenderThread:(id <MTLDevice>)device;
+- (void)updateWithDevice:(id <MTLDevice>)device;
 
 @end
