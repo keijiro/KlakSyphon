@@ -5,8 +5,8 @@ KlakSyphon
 between applications with minimum CPU/GPU cost.
 
 The most important feature of KlakSyphon is that it supports [Metal]. You can
-use Metal on Unity to utilize the GPU features and, at the same time, use in
-combinations with other Syphon-enabled OpenGL applications, like [VDMX] or
+use Metal on Unity to utilize the GPU features and, at the same time, use Unity
+in combinations with other Syphon-enabled OpenGL applications, like [VDMX] or
 [MadMapper].
 
 [Syphon]: http://syphon.v002.info
@@ -18,7 +18,10 @@ System Requirements
 -------------------
 
 - Unity 2018.1
+- Metal graphics API
 - MacOS 10.12 Sierra
+
+KlakSyphon only supports Metal; It doesn't support the OpenGL (GL Core) mode.
 
 MacOS 10.11 El Capitan is also supported, but some Mac models (iMac/MacBook
 with NVIDIA GPU) have problems with required functionalities on it. 10.12
