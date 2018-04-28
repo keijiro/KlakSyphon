@@ -145,14 +145,17 @@ namespace Klak.Syphon
 
         void OnRenderImage(RenderTexture source, RenderTexture dest)
         {
-            // Capture the camera render.
-            var temp = RenderTexture.GetTemporary(
-                _serverTexture.width, _serverTexture.height, 0,
-                RenderTextureFormat.Default, RenderTextureReadWrite.Default
-            );
-            Graphics.Blit(source, temp, _blitMaterial, _alphaSupport ? 1 : 0);
-            Graphics.CopyTexture(temp, _serverTexture);
-            RenderTexture.ReleaseTemporary(temp);
+            if (_serverTexture != null && _blitMaterial != null)
+            {
+                // Capture the camera render.
+                var temp = RenderTexture.GetTemporary(
+                    _serverTexture.width, _serverTexture.height, 0,
+                    RenderTextureFormat.Default, RenderTextureReadWrite.Default
+                );
+                Graphics.Blit(source, temp, _blitMaterial, _alphaSupport ? 1 : 0);
+                Graphics.CopyTexture(temp, _serverTexture);
+                RenderTexture.ReleaseTemporary(temp);
+            }
 
             // Dumb blit
             Graphics.Blit(source, dest);
