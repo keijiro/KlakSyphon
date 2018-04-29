@@ -55,7 +55,7 @@
 {
 }
 
-- (void)updateWithDevice:(id<MTLDevice>)device
+- (void)updateWithDevice:(id<MTLDevice>)device pixelFormat:(MTLPixelFormat)format
 {
     IOSurfaceRef surface = [_connection surfaceHavingLock];
 
@@ -70,7 +70,7 @@
     
     if (!_texture && surface)
     {
-        MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatBGRA8Unorm
+        MTLTextureDescriptor* desc = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:format
                                                                                         width:IOSurfaceGetWidth(surface)
                                                                                        height:IOSurfaceGetHeight(surface)
                                                                                     mipmapped:NO];

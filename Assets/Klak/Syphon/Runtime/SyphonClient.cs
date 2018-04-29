@@ -82,6 +82,11 @@ namespace Klak.Syphon
 
         #region MonoBehaviour implementation
 
+        void Start()
+        {
+            SyphonCommon.ApplyCurrentColorSpace();
+        }
+
         void OnDisable()
         {
             // Stop the client plugin.

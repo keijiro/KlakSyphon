@@ -51,13 +51,7 @@ namespace Klak.Syphon
 
         void Start()
         {
-            // Apply the current color space setting.
-            // Actually this is needed only once,
-            // but we do every time for simplicity.
-            if (QualitySettings.activeColorSpace == ColorSpace.Linear)
-                Plugin_EnableColorSpaceConversion();
-            else
-                Plugin_DisableColorSpaceConversion();
+            SyphonCommon.ApplyCurrentColorSpace();
         }
 
         void OnDisable()
@@ -166,22 +160,16 @@ namespace Klak.Syphon
         #region Native plugin entry points
 
         [DllImport("KlakSyphon")]
-        private static extern IntPtr Plugin_CreateServer(string name, int width, int height);
+        static extern IntPtr Plugin_CreateServer(string name, int width, int height);
 
         [DllImport("KlakSyphon")]
-        private static extern void Plugin_DestroyServer(IntPtr instance);
+        static extern void Plugin_DestroyServer(IntPtr instance);
 
         [DllImport("KlakSyphon")]
-        private static extern IntPtr Plugin_GetServerTexture(IntPtr instance);
+        static extern IntPtr Plugin_GetServerTexture(IntPtr instance);
 
         [DllImport("KlakSyphon")]
-        private static extern void Plugin_PublishServerTexture(IntPtr instance);
-
-        [DllImport("KlakSyphon")]
-        private static extern void Plugin_EnableColorSpaceConversion();
-
-        [DllImport("KlakSyphon")]
-        private static extern void Plugin_DisableColorSpaceConversion();
+        static extern void Plugin_PublishServerTexture(IntPtr instance);
 
         #endregion
     }

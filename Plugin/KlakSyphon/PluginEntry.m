@@ -31,6 +31,20 @@ void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API UnityPluginUnload(void)
     s_graphics = NULL;
 }
 
+#pragma mark - Plugin common functions
+
+static MTLPixelFormat s_pixelFormat = MTLPixelFormatBGRA8Unorm;
+
+void Plugin_EnableColorSpaceConversion(void)
+{
+    s_pixelFormat = MTLPixelFormatBGRA8Unorm_sRGB;
+}
+
+void Plugin_DisableColorSpaceConversion(void)
+{
+    s_pixelFormat = MTLPixelFormatBGRA8Unorm;
+}
+
 #pragma mark - Plugin server functions
 
 LiteServer *Plugin_CreateServer(const char *cname, int width, int height)
@@ -38,6 +52,7 @@ LiteServer *Plugin_CreateServer(const char *cname, int width, int height)
     NSString *name = [NSString stringWithUTF8String:cname];
     return [[LiteServer alloc] initWithName:name
                                  dimensions:NSMakeSize(width, height)
+                                pixelFormat:s_pixelFormat
                                      device:GetMetalDevice()];
 }
 
@@ -54,16 +69,6 @@ void *Plugin_GetServerTexture(LiteServer *server)
 void Plugin_PublishServerTexture(LiteServer *server)
 {
     [server publishNewFrame];
-}
-
-void Plugin_EnableColorSpaceConversion(void)
-{
-    LiteServer.shouldConvertColorSpace = YES;
-}
-
-void Plugin_DisableColorSpaceConversion(void)
-{
-    LiteServer.shouldConvertColorSpace = NO;
 }
 
 #pragma mark - Plugin client functions
@@ -104,7 +109,7 @@ int Plugin_GetClientTextureHeight(LiteClient *client)
 
 void Plugin_UpdateClient(LiteClient *client)
 {
-    [client updateWithDevice:GetMetalDevice()];
+    [client updateWithDevice:GetMetalDevice() pixelFormat:s_pixelFormat];
 }
 
 #pragma mark - Plugin server directory functions

@@ -3,6 +3,8 @@
 
 // LiteClient: Simplified implementation of Syphon client
 
+#import <Metal/MTLPixelFormat.h>
+
 @protocol MTLDevice;
 @protocol MTLTexture;
 
@@ -12,6 +14,6 @@
 @property (readonly) BOOL isValid;
 
 - (id)initWithServerDescription:(NSDictionary *)description;
-- (void)updateWithDevice:(id <MTLDevice>)device;
+- (void)updateWithDevice:(id <MTLDevice>)device pixelFormat:(MTLPixelFormat)format;
 
 @end

@@ -66,19 +66,19 @@ namespace Klak.Syphon
         #region Native plugin entry points
 
         [DllImport("KlakSyphon")]
-        private static extern IntPtr Plugin_CreateServerList();
+        static extern IntPtr Plugin_CreateServerList();
 
         [DllImport("KlakSyphon")]
-        private static extern void Plugin_DestroyServerList(IntPtr list);
+        static extern void Plugin_DestroyServerList(IntPtr list);
 
         [DllImport("KlakSyphon")]
-        private static extern int Plugin_GetServerListCount(IntPtr list);
+        static extern int Plugin_GetServerListCount(IntPtr list);
 
         [DllImport("KlakSyphon")]
-        private static extern IntPtr Plugin_GetNameFromServerList(IntPtr list, int index);
+        static extern IntPtr Plugin_GetNameFromServerList(IntPtr list, int index);
 
         [DllImport("KlakSyphon")]
-        private static extern IntPtr Plugin_GetAppNameFromServerList(IntPtr list, int index);
+        static extern IntPtr Plugin_GetAppNameFromServerList(IntPtr list, int index);
 
         #endregion
     }
