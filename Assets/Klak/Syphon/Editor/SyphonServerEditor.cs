@@ -31,6 +31,8 @@ namespace Klak.Syphon
                     "Syphon Server is running in camera capture mode.",
                     MessageType.None
                 );
+
+                EditorGUILayout.PropertyField(_alphaSupport);
             }
             else
             {
@@ -41,8 +43,6 @@ namespace Klak.Syphon
 
                 EditorGUILayout.PropertyField(_sourceTexture);
             }
-
-            EditorGUILayout.PropertyField(_alphaSupport);
 
             serializedObject.ApplyModifiedProperties();
         }
