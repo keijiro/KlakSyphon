@@ -1,6 +1,10 @@
 KlakSyphon
 ----------
 
+![screenshot](https://i.imgur.com/eputm6Am.jpg)
+![screenshot](https://i.imgur.com/Y8Nc5YCm.jpg)
+![screenshot](https://i.imgur.com/e4fl5lKm.jpg)
+
 **KlakSyphon** is a [Syphon] plugin for Unity that allows sharing frames
 between applications with minimum CPU/GPU cost.
 
@@ -25,7 +29,7 @@ KlakSyphon only supports Metal; It doesn't support the OpenGL (GL Core) mode.
 
 MacOS 10.11 El Capitan is also supported, but some Mac models (iMac/MacBook
 with NVIDIA GPU) have problems with required functionalities on it. 10.12
-Sierra is needed to support wider range of devices.
+Sierra is safer choice to support wider range of devices.
 
 Installation
 ------------
