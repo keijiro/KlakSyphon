@@ -156,6 +156,7 @@ namespace Klak.Syphon
                     Plugin_GetClientTextureHeight(_clientInstance),
                     TextureFormat.RGBA32, false, false, nativeTexture
                 );
+                _clientTexture.wrapMode = TextureWrapMode.Clamp;
             }
 
             if (_clientTexture != null)

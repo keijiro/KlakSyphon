@@ -73,11 +73,12 @@ void Plugin_PublishServerTexture(LiteServer *server)
 
 #pragma mark - Plugin client functions
 
-void *Plugin_CreateClient(const char *name, const char *appName)
+void *Plugin_CreateClient(const char *pName, const char *pAppName)
 {
+    NSString *name = (pName == NULL) ? nil : [NSString stringWithUTF8String:pName];
+    NSString *appName = (pAppName == NULL) ? nil : [NSString stringWithUTF8String:pAppName];
     SyphonServerDirectory *dir = SyphonServerDirectory.sharedDirectory;
-    NSArray *servers = [dir serversMatchingName:[NSString stringWithUTF8String:name]
-                                        appName:[NSString stringWithUTF8String:appName]];
+    NSArray *servers = [dir serversMatchingName:name appName:appName];
     if (servers.count == 0) return NULL;
     return [[LiteClient alloc] initWithServerDescription:servers[0]];
 }
