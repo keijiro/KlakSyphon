@@ -32,17 +32,11 @@ namespace Klak.Syphon
 
         #endregion
 
-        #region Blit shader
-
-        [SerializeField, HideInInspector] Shader _blitShader;
-        Material _blitMaterial;
-
-        #endregion
-
-        #region Misc variables
+        #region Internal objects and variables
 
         IntPtr _serverInstance;
         Texture _serverTexture;
+        Material _blitMaterial;
         bool _hasCamera;
 
         #endregion
@@ -114,7 +108,7 @@ namespace Klak.Syphon
             // Lazy initialization for the internal objects.
             if (_blitMaterial == null)
             {
-                _blitMaterial = new Material(_blitShader);
+                _blitMaterial = new Material(Shader.Find("Hidden/Klak/Syphon/Blit"));
                 _blitMaterial.hideFlags = HideFlags.DontSave;
             }
 
