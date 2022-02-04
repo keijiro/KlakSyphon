@@ -1,4 +1,5 @@
 {
-	"dependencies": {
-	}
+  "dependencies": {
+    "com.unity.modules.particlesystem": "1.0.0"
+  }
 }
