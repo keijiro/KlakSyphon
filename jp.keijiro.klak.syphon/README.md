@@ -2,8 +2,6 @@ KlakSyphon
 ==========
 
 ![screenshot](https://i.imgur.com/eputm6Am.jpg)
-![screenshot](https://i.imgur.com/Y8Nc5YCm.jpg)
-![screenshot](https://i.imgur.com/e4fl5lKm.jpg)
 
 **KlakSyphon** is a [Syphon] plugin for Unity that allows sharing frames
 between applications with minimum CPU/GPU cost.
@@ -21,19 +19,48 @@ in combinations with other Syphon-enabled OpenGL applications, like [VDMX] or
 System Requirements
 -------------------
 
-- Unity 2018.1
+- Unity 2021.2
 - Metal graphics API
-- MacOS 10.12 Sierra
+- MacOS 12.1 Monterey
 
 KlakSyphon only supports Metal; It doesn't support the OpenGL (GL Core) mode.
 
-MacOS 10.11 El Capitan is also supported, but some Mac models (iMac/MacBook
-with NVIDIA GPU) have problems with required functionalities on it. 10.12
-Sierra is safer choice to support wider range of devices.
+How to install
+--------------
 
-Installation
-------------
+This package uses the [scoped registry] feature to resolve package dependencies.
+Please add the following sections to the manifest file (Packages/manifest.json).
 
-Download and import one of the .unitypackage files from [Releases] page.
+[scoped registry]: https://docs.unity3d.com/Manual/upm-scoped.html
 
-[Releases]: https://github.com/keijiro/KlakSyphon/releases
+To the `scopedRegistries` section:
+
+```
+{
+  "name": "Keijiro",
+  "url": "https://registry.npmjs.com",
+  "scopes": [ "jp.keijiro" ]
+}
+```
+
+To the `dependencies` section:
+
+```
+"jp.keijiro.klak.syphon": "0.0.4"
+```
+
+After changes, the manifest file should look like below:
+
+```
+{
+  "scopedRegistries": [
+    {
+      "name": "Keijiro",
+      "url": "https://registry.npmjs.com",
+      "scopes": [ "jp.keijiro" ]
+    }
+  ],
+  "dependencies": {
+    "jp.keijiro.klak.syphon": "0.0.4",
+...
+```
