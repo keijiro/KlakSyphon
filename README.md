@@ -37,13 +37,3 @@ Installation
 Download and import one of the .unitypackage files from [Releases] page.
 
 [Releases]: https://github.com/keijiro/KlakSyphon/releases
-
-License
--------
-
-- The Syphon framework is provided under the Syphon Framework License.
-- The other part of the plugin is provided under the KlakSyphone License (MIT).
-
-See the [LICENSE] file for further details.
-
-[LICENSE]: LICENSE
