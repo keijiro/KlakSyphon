@@ -1,19 +1,14 @@
-# Windows
 Thumbs.db
 Desktop.ini
-
-# macOS
 .DS_Store
-
-# Code Editors
-.idea
-.vscode
-*.csproj
-*.sln
 *.swp
-xcuserdata
-xcshareddata
 
-# Unity
 /Library
+/Logs
+/Recordings
 /Temp
+/UserSettings
+
+/Plugin/**/*.o
+/Plugin/**/*.dylib
+/Plugin/**/*.bundle
