@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _appName: Unity
-  _serverName: Camera 2
+  _serverName: Test Card Camera
   _targetTexture: {fileID: 8400000, guid: a6a8d4e97af9b48d68bd2c0d9ac19056, type: 2}
   _targetRenderer: {fileID: 0}
   _targetMaterialProperty: 

@@ -1,0 +1,18 @@
+{
+    "name": "Klak.Syphon.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:43c5c07b249414f9798d5aa4418776dc"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

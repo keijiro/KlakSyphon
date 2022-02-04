@@ -1,7 +1,7 @@
 #!/bin/sh
 
 LIB="KlakSyphon"
-DST="../Assets/Klak/Syphon/Internal"
+DST="../jp.keijiro.klak.syphon/Internal"
 
 set -e
 set -x

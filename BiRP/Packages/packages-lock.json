@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "jp.keijiro.klak.syphon": {
+      "version": "file:../../jp.keijiro.klak.syphon",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.modules.particlesystem": {
       "version": "1.0.0",
       "depth": 0,

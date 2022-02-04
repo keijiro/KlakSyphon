@@ -3,11 +3,11 @@ Desktop.ini
 .DS_Store
 *.swp
 
-/Library
-/Logs
-/Recordings
-/Temp
-/UserSettings
+/*/Library
+/*/Logs
+/*/Recordings
+/*/Temp
+/*/UserSettings
 
 /Plugin/**/*.o
 /Plugin/**/*.dylib
