@@ -12,11 +12,11 @@
 #pragma mark Device interface retrieval
 
 static IUnityInterfaces *s_interfaces;
-static IUnityGraphicsMetal *s_graphics;
+static IUnityGraphicsMetalV1 *s_graphics;
 
 static id <MTLDevice> GetMetalDevice()
 {
-    if (!s_graphics) s_graphics = UNITY_GET_INTERFACE(s_interfaces, IUnityGraphicsMetal);
+    if (!s_graphics) s_graphics = UNITY_GET_INTERFACE(s_interfaces, IUnityGraphicsMetalV1);
     return s_graphics ? s_graphics->MetalDevice() : nil;
 }
 
