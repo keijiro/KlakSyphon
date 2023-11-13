@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "com.unity.modules.particlesystem": "1.0.0",
-    "jp.keijiro.klak.syphon": "file:../../jp.keijiro.klak.syphon"
+    "jp.keijiro.klak.syphon": "file:../../jp.keijiro.klak.syphon",
+    "com.unity.modules.particlesystem": "1.0.0"
   }
 }
