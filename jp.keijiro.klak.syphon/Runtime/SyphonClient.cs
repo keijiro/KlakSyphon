@@ -53,7 +53,7 @@ namespace Klak.Syphon
             set { _targetRenderer = value; }
         }
 
-        [SerializeField] string _targetMaterialProperty;
+        [SerializeField] string _targetMaterialProperty = null;
 
         public string targetMaterialProperty {
             get { return _targetMaterialProperty; }
@@ -72,7 +72,7 @@ namespace Klak.Syphon
 
         #region Private variables
 
-        [SerializeField] Texture _nullTexture;
+        [SerializeField] Texture _nullTexture = null;
 
         IntPtr _clientInstance;
         Texture _clientTexture;
