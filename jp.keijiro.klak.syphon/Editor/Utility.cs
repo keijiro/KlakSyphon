@@ -38,7 +38,11 @@ struct AutoProperty
 
         foreach (var f in typeof(T).GetFields(flags))
             if (f.FieldType == typeof(AutoProperty))
-                f.SetValue(target, new AutoProperty(so.FindProperty(f.Name)));
+            {
+                var prop = so.FindProperty(f.Name);
+                prop = prop ?? so.FindProperty($"<{f.Name}>k__BackingField");
+                f.SetValue(target, new AutoProperty(prop));
+            }
     }
 }
 

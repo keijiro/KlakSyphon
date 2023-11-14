@@ -12,7 +12,7 @@ namespace Klak.Syphon
 
         [SerializeField] string _serverName;
 
-        public string serverName {
+        public string ServerName {
             get { return _serverName; }
             set {
                 if (_serverName == value) return;
@@ -25,34 +25,15 @@ namespace Klak.Syphon
 
         #region Target settings
 
-        [SerializeField] RenderTexture _targetTexture;
-
-        public RenderTexture targetTexture {
-            get { return _targetTexture; }
-            set { _targetTexture = value; }
-        }
-
-        [SerializeField] Renderer _targetRenderer;
-
-        public Renderer targetRenderer {
-            get { return _targetRenderer; }
-            set { _targetRenderer = value; }
-        }
-
-        [SerializeField] string _targetMaterialProperty = null;
-
-        public string targetMaterialProperty {
-            get { return _targetMaterialProperty; }
-            set { targetMaterialProperty = value; }
-        }
+        [field:SerializeField] RenderTexture TargetTexture { get; set; }
+        [field:SerializeField] Renderer TargetRenderer { get; set; }
+        [field:SerializeField] string TargetMaterialProperty { get; set; }
 
         #endregion
 
         #region Public properties
 
-        public Texture receivedTexture {
-            get { return _clientTexture; }
-        }
+        public Texture ReceivedTexture => _clientTexture;
 
         #endregion
 
@@ -92,11 +73,11 @@ namespace Klak.Syphon
                 _clientTexture = null;
 
                 // Cancel texture use in the target renderer.
-                if (_targetRenderer != null && _propertyBlock != null)
+                if (TargetRenderer != null && _propertyBlock != null)
                 {
-                    _targetRenderer.GetPropertyBlock(_propertyBlock);
-                    _propertyBlock.SetTexture(_targetMaterialProperty, _nullTexture);
-                    _targetRenderer.SetPropertyBlock(_propertyBlock);
+                    TargetRenderer.GetPropertyBlock(_propertyBlock);
+                    _propertyBlock.SetTexture(TargetMaterialProperty, _nullTexture);
+                    TargetRenderer.SetPropertyBlock(_propertyBlock);
                 }
             }
         }
@@ -152,26 +133,26 @@ namespace Klak.Syphon
             if (_clientTexture != null)
             {
                 // Blit to the target render texture.
-                if (_targetTexture != null)
-                    Graphics.Blit(_clientTexture, _targetTexture);
+                if (TargetTexture != null)
+                    Graphics.Blit(_clientTexture, TargetTexture);
 
                 // Override the target renderer material.
-                if (_targetRenderer != null)
+                if (TargetRenderer != null)
                 {
                     if (_propertyBlock == null) _propertyBlock = new MaterialPropertyBlock();
-                    _targetRenderer.GetPropertyBlock(_propertyBlock);
-                    _propertyBlock.SetTexture(_targetMaterialProperty, _clientTexture);
-                    _targetRenderer.SetPropertyBlock(_propertyBlock);
+                    TargetRenderer.GetPropertyBlock(_propertyBlock);
+                    _propertyBlock.SetTexture(TargetMaterialProperty, _clientTexture);
+                    TargetRenderer.SetPropertyBlock(_propertyBlock);
                 }
             }
             else
             {
                 // No texture ready: Cancel material overriding.
-                if (_targetRenderer != null && _propertyBlock != null)
+                if (TargetRenderer != null && _propertyBlock != null)
                 {
-                    _targetRenderer.GetPropertyBlock(_propertyBlock);
-                    _propertyBlock.SetTexture(_targetMaterialProperty, _nullTexture);
-                    _targetRenderer.SetPropertyBlock(_propertyBlock);
+                    TargetRenderer.GetPropertyBlock(_propertyBlock);
+                    _propertyBlock.SetTexture(TargetMaterialProperty, _nullTexture);
+                    TargetRenderer.SetPropertyBlock(_propertyBlock);
                 }
             }
         }

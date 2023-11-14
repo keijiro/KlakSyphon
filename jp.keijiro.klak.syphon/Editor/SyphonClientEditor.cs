@@ -18,9 +18,9 @@ public class SyphonClientEditor : Editor
     #pragma warning disable CS0649
 
     AutoProperty _serverName;
-    AutoProperty _targetTexture;
-    AutoProperty _targetRenderer;
-    AutoProperty _targetMaterialProperty;
+    AutoProperty TargetTexture;
+    AutoProperty TargetRenderer;
+    AutoProperty TargetMaterialProperty;
 
     #pragma warning restore
 
@@ -90,22 +90,22 @@ public class SyphonClientEditor : Editor
                 client.SendMessage("OnDisable");
 
         // Target Texture/Renderer
-        EditorGUILayout.PropertyField(_targetTexture);
-        EditorGUILayout.PropertyField(_targetRenderer);
+        EditorGUILayout.PropertyField(TargetTexture);
+        EditorGUILayout.PropertyField(TargetRenderer);
 
         EditorGUI.indentLevel++;
 
-        if (_targetRenderer.Target.hasMultipleDifferentValues)
+        if (TargetRenderer.Target.hasMultipleDifferentValues)
         {
             // Multiple renderers selected: Show the simple text field.
             EditorGUILayout.
-              PropertyField(_targetMaterialProperty, Labels.Property);
+              PropertyField(TargetMaterialProperty, Labels.Property);
         }
-        else if (_targetRenderer.Target.objectReferenceValue != null)
+        else if (TargetRenderer.Target.objectReferenceValue != null)
         {
             // Single renderer: Show the material property selection dropdown.
             MaterialPropertySelector.
-              DropdownList(_targetRenderer, _targetMaterialProperty);
+              DropdownList(TargetRenderer, TargetMaterialProperty);
         }
 
         EditorGUI.indentLevel--;
