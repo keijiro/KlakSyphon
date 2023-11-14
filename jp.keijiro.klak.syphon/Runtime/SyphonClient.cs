@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.InteropServices;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.Rendering;
 
 namespace Klak.Syphon
@@ -41,7 +39,7 @@ namespace Klak.Syphon
 
         [SerializeField] Texture _nullTexture = null;
 
-        IntPtr _clientInstance;
+        System.IntPtr _clientInstance;
         Texture _clientTexture;
         MaterialPropertyBlock _propertyBlock;
 
@@ -57,10 +55,10 @@ namespace Klak.Syphon
         void OnDisable()
         {
             // Stop the client plugin.
-            if (_clientInstance != IntPtr.Zero)
+            if (_clientInstance != System.IntPtr.Zero)
             {
-                Plugin_DestroyClient(_clientInstance);
-                _clientInstance = IntPtr.Zero;
+                Plugin.DestroyClient(_clientInstance);
+                _clientInstance = System.IntPtr.Zero;
             }
 
             // Dispose the client texture.
@@ -85,28 +83,28 @@ namespace Klak.Syphon
         void Update()
         {
             // If we have no connection yet, keep trying to connect to the server.
-            if (_clientInstance == IntPtr.Zero)
+            if (_clientInstance == System.IntPtr.Zero)
             {
                 var pair = _serverName.Split('/');
                 var name = pair[1] == "(no name)" ? "" : pair[1];
-                _clientInstance = Plugin_CreateClient(name, pair[0]);
+                _clientInstance = Plugin.CreateClient(name, pair[0]);
             }
 
             // Break and return if there is no connection at this point.
-            if (_clientInstance == IntPtr.Zero) return;
+            if (_clientInstance == System.IntPtr.Zero) return;
 
             // If the client has been invalidated, destroy it.
-            if (!Plugin_IsClientValid(_clientInstance))
+            if (!Plugin.IsClientValid(_clientInstance))
             {
                 OnDisable();
                 return;
             }
 
             // Update the client.
-            Plugin_UpdateClient(_clientInstance);
+            Plugin.UpdateClient(_clientInstance);
 
             // Retrieve the native texture pointer from the client.
-            var nativeTexture = Plugin_GetClientTexture(_clientInstance);
+            var nativeTexture = Plugin.GetClientTexture(_clientInstance);
 
             // If the texture seems to be changed, release the current texture.
             if (_clientTexture != null &&
@@ -120,11 +118,11 @@ namespace Klak.Syphon
             }
 
             // If the client texture is not present, create a new one.
-            if (_clientTexture == null && nativeTexture != IntPtr.Zero)
+            if (_clientTexture == null && nativeTexture != System.IntPtr.Zero)
             {
                 _clientTexture = Texture2D.CreateExternalTexture(
-                    Plugin_GetClientTextureWidth(_clientInstance),
-                    Plugin_GetClientTextureHeight(_clientInstance),
+                    Plugin.GetClientTextureWidth(_clientInstance),
+                    Plugin.GetClientTextureHeight(_clientInstance),
                     TextureFormat.RGBA32, false, false, nativeTexture
                 );
                 _clientTexture.wrapMode = TextureWrapMode.Clamp;
@@ -156,31 +154,6 @@ namespace Klak.Syphon
                 }
             }
         }
-
-        #endregion
-
-        #region Native plugin entry points
-
-        [DllImport("KlakSyphon")]
-        static extern IntPtr Plugin_CreateClient(string name, string appName);
-
-        [DllImport("KlakSyphon")]
-        static extern void Plugin_DestroyClient(IntPtr instance);
-
-        [DllImport("KlakSyphon")]
-        static extern bool Plugin_IsClientValid(IntPtr instance);
-
-        [DllImport("KlakSyphon")]
-        static extern IntPtr Plugin_GetClientTexture(IntPtr instance);
-
-        [DllImport("KlakSyphon")]
-        static extern int Plugin_GetClientTextureWidth(IntPtr instance);
-
-        [DllImport("KlakSyphon")]
-        static extern int Plugin_GetClientTextureHeight(IntPtr instance);
-
-        [DllImport("KlakSyphon")]
-        static extern void Plugin_UpdateClient(IntPtr instance);
 
         #endregion
     }
