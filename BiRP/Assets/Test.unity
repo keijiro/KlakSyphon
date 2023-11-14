@@ -152,8 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79770b2944d4cdeb52083e0a22da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _appName: Unity
-  _serverName: Test Card Camera
+  _serverName: Simple Server/(no name)
   _targetTexture: {fileID: 8400000, guid: a6a8d4e97af9b48d68bd2c0d9ac19056, type: 2}
   _targetRenderer: {fileID: 0}
   _targetMaterialProperty: 
@@ -5392,8 +5391,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79770b2944d4cdeb52083e0a22da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _appName: VDMX5
-  _serverName: 
+  _serverName: Unity/Test Card Camera
   _targetTexture: {fileID: 0}
   _targetRenderer: {fileID: 1823015632}
   _targetMaterialProperty: _MainTex

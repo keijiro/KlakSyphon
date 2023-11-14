@@ -1,7 +1,4 @@
-﻿// KlakSyphon - Syphon plugin for Unity
-// https://github.com/keijiro/KlakSyphon
-
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -12,17 +9,6 @@ namespace Klak.Syphon
     public class SyphonClient : MonoBehaviour
     {
         #region Source settings
-
-        [SerializeField] string _appName;
-
-        public string appName {
-            get { return _appName; }
-            set {
-                if (_appName == value) return;
-                _appName = value;
-                OnDisable(); // Force reconnection
-            }
-        }
 
         [SerializeField] string _serverName;
 
@@ -119,7 +105,11 @@ namespace Klak.Syphon
         {
             // If we have no connection yet, keep trying to connect to the server.
             if (_clientInstance == IntPtr.Zero)
-                _clientInstance = Plugin_CreateClient(_serverName, _appName);
+            {
+                var pair = _serverName.Split('/');
+                var name = pair[1] == "(no name)" ? "" : pair[1];
+                _clientInstance = Plugin_CreateClient(name, pair[0]);
+            }
 
             // Break and return if there is no connection at this point.
             if (_clientInstance == IntPtr.Zero) return;
