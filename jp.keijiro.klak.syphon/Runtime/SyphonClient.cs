@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Rendering;
+using Klak.Syphon.Interop;
 
 namespace Klak.Syphon
 {
@@ -39,7 +40,7 @@ namespace Klak.Syphon
 
         [SerializeField] Texture _nullTexture = null;
 
-        System.IntPtr _clientInstance;
+        PluginClient _clientInstance;
         Texture _clientTexture;
         MaterialPropertyBlock _propertyBlock;
 
@@ -48,18 +49,13 @@ namespace Klak.Syphon
         #region MonoBehaviour implementation
 
         void Start()
-        {
-            SyphonCommon.ApplyCurrentColorSpace();
-        }
+          => SyphonCommon.ApplyCurrentColorSpace();
 
         void OnDisable()
         {
             // Stop the client plugin.
-            if (_clientInstance != System.IntPtr.Zero)
-            {
-                Plugin.DestroyClient(_clientInstance);
-                _clientInstance = System.IntPtr.Zero;
-            }
+            _clientInstance?.Dispose();
+            _clientInstance = null;
 
             // Dispose the client texture.
             if (_clientTexture != null)
@@ -83,28 +79,26 @@ namespace Klak.Syphon
         void Update()
         {
             // If we have no connection yet, keep trying to connect to the server.
-            if (_clientInstance == System.IntPtr.Zero)
+            if (_clientInstance == null)
             {
                 var pair = _serverName.Split('/');
                 var name = pair[1] == "(no name)" ? "" : pair[1];
-                _clientInstance = Plugin.CreateClient(name, pair[0]);
+                _clientInstance = PluginClient.Create(name, pair[0]);
             }
 
             // Break and return if there is no connection at this point.
-            if (_clientInstance == System.IntPtr.Zero) return;
-
             // If the client has been invalidated, destroy it.
-            if (!Plugin.IsClientValid(_clientInstance))
+            if (!(_clientInstance?.IsValid ?? false))
             {
                 OnDisable();
                 return;
             }
 
             // Update the client.
-            Plugin.UpdateClient(_clientInstance);
+            _clientInstance.Update();
 
             // Retrieve the native texture pointer from the client.
-            var nativeTexture = Plugin.GetClientTexture(_clientInstance);
+            var nativeTexture = _clientInstance.TexturePointer;
 
             // If the texture seems to be changed, release the current texture.
             if (_clientTexture != null &&
@@ -121,8 +115,7 @@ namespace Klak.Syphon
             if (_clientTexture == null && nativeTexture != System.IntPtr.Zero)
             {
                 _clientTexture = Texture2D.CreateExternalTexture(
-                    Plugin.GetClientTextureWidth(_clientInstance),
-                    Plugin.GetClientTextureHeight(_clientInstance),
+                    _clientInstance.Width, _clientInstance.Height,
                     TextureFormat.RGBA32, false, false, nativeTexture
                 );
                 _clientTexture.wrapMode = TextureWrapMode.Clamp;
