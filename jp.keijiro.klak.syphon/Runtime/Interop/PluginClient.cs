@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Klak.Syphon.Interop {
 
-sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
+public sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 {
     #region SafeHandle implementation
 
@@ -13,34 +13,29 @@ sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 
     protected override bool ReleaseHandle()
     {
-        _DestroyClient(handle);
+        _Destroy(handle);
         return true;
     }
 
     #endregion
 
-    #region Public methods
+    #region Factory method
 
     public static PluginClient Create(string appName, string serverName)
-      => _CreateClient(serverName, appName);
+      => _Create(serverName, appName);
 
     public static PluginClient Create((string app, string server) name)
-      => _CreateClient(name.server, name.app);
+      => _Create(name.server, name.app);
 
-    public bool IsValid
-      => _IsClientValid(this);
+    #endregion
 
-    public IntPtr TexturePointer
-      => _GetClientTexture(this);
+    #region Public methods and properties
 
-    public int Width
-      => _GetClientTextureWidth(this);
-
-    public int Height
-      => _GetClientTextureHeight(this);
-
-    public void Update()
-      => _UpdateClient(this);
+    public bool IsValid => _IsValid(this);
+    public IntPtr TexturePointer => _GetTexture(this);
+    public int Width => _GetTextureWidth(this);
+    public int Height => _GetTextureHeight(this);
+    public void Update() => _Update(this);
 
     #endregion
 
@@ -63,26 +58,25 @@ sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 
     #region Unmanaged interface
 
-    [DllImport("KlakSyphon", EntryPoint = "Plugin_CreateClient")]
-    public static extern PluginClient _CreateClient(string serverName, string appName);
+    [DllImport("KlakSyphon", EntryPoint = "Plugin_CreateClient")] static extern PluginClient _Create(string serverName, string appName);
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_DestroyClient")]
-    public static extern void _DestroyClient(IntPtr instance);
+    static extern void _Destroy(IntPtr instance);
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_IsClientValid")]
-    public static extern bool _IsClientValid(PluginClient instance);
+    static extern bool _IsValid(PluginClient instance);
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_GetClientTexture")]
-    public static extern IntPtr _GetClientTexture(PluginClient instance);
+    static extern IntPtr _GetTexture(PluginClient instance);
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_GetClientTextureWidth")]
-    public static extern int _GetClientTextureWidth(PluginClient instance);
+    static extern int _GetTextureWidth(PluginClient instance);
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_GetClientTextureHeight")]
-    public static extern int _GetClientTextureHeight(PluginClient instance);
+    static extern int _GetTextureHeight(PluginClient instance);
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_UpdateClient")]
-    public static extern void _UpdateClient(PluginClient instance);
+    static extern void _Update(PluginClient instance);
 
     #endregion
 }

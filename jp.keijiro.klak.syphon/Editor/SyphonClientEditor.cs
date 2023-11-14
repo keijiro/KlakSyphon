@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEditor;
+using ServerList = Klak.Syphon.Interop.ServerList;
 
 namespace Klak.Syphon {
 
@@ -28,30 +29,13 @@ public class SyphonClientEditor : Editor
     void ShowServerNameDropdown(Rect rect)
     {
         var menu = new GenericMenu();
+        using var list = ServerList.Create();
 
-        var list = Plugin_CreateServerList();
-        var count = Plugin_GetServerListCount(list);
+        foreach (var name in list.GetCombinedNameArray())
+            menu.AddItem(new GUIContent(name), false, OnSelectName, name);
 
-        if (count > 0)
-        {
-            for (var i = 0; i < count; i++)
-            {
-                var pName = Plugin_GetNameFromServerList(list, i);
-                var pAppName = Plugin_GetAppNameFromServerList(list, i);
-
-                var name = (pName != IntPtr.Zero) ? Marshal.PtrToStringAnsi(pName) : "(no name)";
-                var appName = (pAppName != IntPtr.Zero) ? Marshal.PtrToStringAnsi(pAppName) : "(no app name)";
-
-                var text = $"{appName}/{name}";
-                menu.AddItem(new GUIContent(text), false, OnSelectName, text);
-            }
-        }
-        else
-        {
-            menu.AddItem(new GUIContent("No source available"), false, null);
-        }
-
-        Plugin_DestroyServerList(list);
+        if (list.Count == 0)
+            menu.AddItem(new GUIContent("No server available"), false, null);
 
         menu.DropDown(rect);
     }
@@ -112,25 +96,6 @@ public class SyphonClientEditor : Editor
 
         serializedObject.ApplyModifiedProperties();
     }
-
-    #region Native plugin entry points
-
-    [DllImport("KlakSyphon")]
-    static extern IntPtr Plugin_CreateServerList();
-
-    [DllImport("KlakSyphon")]
-    static extern void Plugin_DestroyServerList(IntPtr list);
-
-    [DllImport("KlakSyphon")]
-    static extern int Plugin_GetServerListCount(IntPtr list);
-
-    [DllImport("KlakSyphon")]
-    static extern IntPtr Plugin_GetNameFromServerList(IntPtr list, int index);
-
-    [DllImport("KlakSyphon")]
-    static extern IntPtr Plugin_GetAppNameFromServerList(IntPtr list, int index);
-
-    #endregion
 }
 
 } // namespace Klak.Syphon
