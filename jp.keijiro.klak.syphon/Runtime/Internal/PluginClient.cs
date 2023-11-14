@@ -1,6 +1,7 @@
+using Microsoft.Win32.SafeHandles;
 using System;
 using System.Runtime.InteropServices;
-using Microsoft.Win32.SafeHandles;
+using UnityEngine;
 
 namespace Klak.Syphon.Interop {
 
@@ -20,11 +21,11 @@ sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 
     #region Public methods
 
-    public static PluginClient Create(string name)
-      => _CreateClient(name, "");
+    public static PluginClient Create(string appName, string serverName)
+      => _CreateClient(serverName, appName);
 
-    public static PluginClient Create(string name, string appName)
-      => _CreateClient(name, appName);
+    public static PluginClient Create((string app, string server) name)
+      => _CreateClient(name.server, name.app);
 
     public bool IsValid
       => _IsClientValid(this);
@@ -43,10 +44,27 @@ sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 
     #endregion
 
+    #region Helper methods
+
+    public bool HasSameTexture(Texture2D texture)
+      => texture != null && texture.GetNativeTexturePtr() == TexturePointer;
+
+    public Texture2D CreateTexture()
+    {
+        var pointer = TexturePointer;
+        if (pointer == IntPtr.Zero) return null;
+        var tex = Texture2D.CreateExternalTexture
+           (Width, Height, TextureFormat.RGBA32, false, false, pointer);
+        tex.wrapMode = TextureWrapMode.Clamp;
+        return tex;
+    }
+
+    #endregion
+
     #region Unmanaged interface
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_CreateClient")]
-    public static extern PluginClient _CreateClient(string name, string appName);
+    public static extern PluginClient _CreateClient(string serverName, string appName);
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_DestroyClient")]
     public static extern void _DestroyClient(IntPtr instance);

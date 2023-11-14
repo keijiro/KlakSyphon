@@ -152,12 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79770b2944d4cdeb52083e0a22da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _serverName: Simple Server/(no name)
+  <ServerName>k__BackingField: Simple Server/(no name)
   <TargetTexture>k__BackingField: {fileID: 8400000, guid: a6a8d4e97af9b48d68bd2c0d9ac19056,
     type: 2}
   <TargetRenderer>k__BackingField: {fileID: 0}
   <TargetMaterialProperty>k__BackingField: 
-  _nullTexture: {fileID: 2800000, guid: 4d452f854bc6b43488690d49f3cd2e9c, type: 3}
 --- !u!4 &95214363
 Transform:
   m_ObjectHideFlags: 0
@@ -5392,11 +5391,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79770b2944d4cdeb52083e0a22da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _serverName: Unity/Test Card Camera
+  <ServerName>k__BackingField: Unity/Test Card Camera
   <TargetTexture>k__BackingField: {fileID: 0}
   <TargetRenderer>k__BackingField: {fileID: 1823015632}
   <TargetMaterialProperty>k__BackingField: _MainTex
-  _nullTexture: {fileID: 2800000, guid: 4d452f854bc6b43488690d49f3cd2e9c, type: 3}
 --- !u!23 &1823015632
 MeshRenderer:
   m_ObjectHideFlags: 0
