@@ -1,6 +1,6 @@
 using Microsoft.Win32.SafeHandles;
-using System;
 using System.Runtime.InteropServices;
+using IntPtr = System.IntPtr;
 
 namespace Klak.Syphon.Interop {
 
@@ -38,7 +38,10 @@ public sealed class ServerList : SafeHandleZeroOrMinusOneIsInvalid
     {
         var list = new string[Count];
         for (var i = 0; i < Count; i++)
-            list[i] = $"{GetAppName(i)}/{GetName(i)}";
+        {
+            var (app, name) = (GetAppName(i), GetName(i));
+            list[i] = string.IsNullOrEmpty(name) ? app : $"{app}/{name}";
+        }
         return list;
     }
 
@@ -47,7 +50,7 @@ public sealed class ServerList : SafeHandleZeroOrMinusOneIsInvalid
     #region Unmanaged interface
 
     string ToString(IntPtr ptr)
-      => ptr != IntPtr.Zero ? Marshal.PtrToStringAnsi(ptr) : "(no name)";
+      => ptr != IntPtr.Zero ? Marshal.PtrToStringAnsi(ptr) : null;
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_CreateServerList")]
     static extern ServerList _Create();

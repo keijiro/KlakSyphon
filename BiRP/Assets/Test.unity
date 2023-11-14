@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79770b2944d4cdeb52083e0a22da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <ServerName>k__BackingField: Simple Server/(no name)
+  <ServerName>k__BackingField: Simple Server
   <TargetTexture>k__BackingField: {fileID: 8400000, guid: a6a8d4e97af9b48d68bd2c0d9ac19056,
     type: 2}
   <TargetRenderer>k__BackingField: {fileID: 0}

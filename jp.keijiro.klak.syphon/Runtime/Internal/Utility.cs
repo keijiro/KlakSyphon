@@ -25,8 +25,7 @@ static class Utility
     {
         if (string.IsNullOrEmpty(name)) return (null, null);
         var pair = name.Split('/');
-        if (pair.Length < 2 || pair[1] == "(no name)") return (pair[0], null);
-        return (pair[0], pair[1]);
+        return (pair[0], pair.Length > 1 ? pair[1] : null);
     }
 
     #endregion
