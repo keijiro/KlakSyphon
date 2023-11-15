@@ -48,8 +48,8 @@ public sealed class SyphonClient : MonoBehaviour
         if (_plugin.name != ServerName) OnDisable();
 
         // Plugin lazy initialization
-        if (_plugin.instance == null && !string.IsNullOrEmpty(ServerName))
-            _plugin = (Plugin.Create(Utility.SplitName(ServerName)), ServerName);
+        if (_plugin.instance == null)
+            _plugin = (Plugin.Create(ServerName), ServerName);
 
         // Plugin lazy disposal
         if (_plugin.instance == null || !_plugin.instance.IsValid)

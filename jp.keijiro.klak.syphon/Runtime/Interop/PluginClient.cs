@@ -21,11 +21,16 @@ public sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 
     #region Factory method
 
-    public static PluginClient Create(string appName, string serverName)
-      => _Create(serverName, appName);
+    public static PluginClient Create(string name)
+    {
+        if (string.IsNullOrEmpty(name)) return null;
+        var split = name.IndexOf('/');
+        if (split < 0) return _Create(null, name);
+        return _Create(name.Substring(split + 1), name.Substring(0, split));
+    }
 
-    public static PluginClient Create((string app, string server) name)
-      => _Create(name.server, name.app);
+    public static PluginClient Create(string appName, string name)
+      => _Create(name, appName);
 
     #endregion
 
@@ -58,7 +63,8 @@ public sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 
     #region Unmanaged interface
 
-    [DllImport("KlakSyphon", EntryPoint = "Plugin_CreateClient")] static extern PluginClient _Create(string serverName, string appName);
+    [DllImport("KlakSyphon", EntryPoint = "Plugin_CreateClient")]
+    static extern PluginClient _Create(string name, string appName);
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_DestroyClient")]
     static extern void _Destroy(IntPtr instance);

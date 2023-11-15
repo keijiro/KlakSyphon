@@ -19,17 +19,6 @@ static class Utility
 
     #endregion
 
-    #region Syphon name
-
-    public static (string app, string server) SplitName(string name)
-    {
-        if (string.IsNullOrEmpty(name)) return (null, null);
-        var pair = name.Split('/');
-        return (pair[0], pair.Length > 1 ? pair[1] : null);
-    }
-
-    #endregion
-
     #region Material property
 
     static MaterialPropertyBlock _sharedPropertyBlock;

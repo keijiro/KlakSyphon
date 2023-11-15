@@ -34,15 +34,15 @@ public sealed class ServerList : SafeHandleZeroOrMinusOneIsInvalid
 
     #region Helper methods
 
-    public string[] GetCombinedNameArray()
+    public string[] GetNameArray()
     {
-        var list = new string[Count];
+        var temp = new string[Count];
         for (var i = 0; i < Count; i++)
         {
             var (app, name) = (GetAppName(i), GetName(i));
-            list[i] = string.IsNullOrEmpty(name) ? app : $"{app}/{name}";
+            temp[i] = string.IsNullOrEmpty(name) ? app : $"{app}/{name}";
         }
-        return list;
+        return temp;
     }
 
     #endregion

@@ -10,12 +10,6 @@ public class SyphonClientEditor : Editor
 {
     #region Private members
 
-    static class Labels
-    {
-        public static Label Property = "Property";
-        public static Label Select = "Select";
-    }
-
     #pragma warning disable CS0649
 
     AutoProperty ServerName;
@@ -25,6 +19,12 @@ public class SyphonClientEditor : Editor
 
     #pragma warning restore
 
+    static class Labels
+    {
+        public static Label Property = "Property";
+        public static Label Select = "Select";
+    }
+
     #endregion
 
     #region Server name dropdown
@@ -33,7 +33,7 @@ public class SyphonClientEditor : Editor
     {
         var menu = new GenericMenu();
         using var list = ServerList.Create();
-        foreach (var name in list.GetCombinedNameArray())
+        foreach (var name in list.GetNameArray())
             menu.AddItem(new GUIContent(name), false, OnSelectName, name);
         if (list.Count == 0)
             menu.AddItem(new GUIContent("No server available"), false, null);
