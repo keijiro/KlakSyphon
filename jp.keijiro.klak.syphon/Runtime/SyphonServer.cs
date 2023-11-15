@@ -124,6 +124,8 @@ public sealed class SyphonServer : MonoBehaviour
     {
         SetupPlugin();
 
+        if (_plugin.instance == null) return;
+
         // Blitter lazy initialization
         if (_blitMaterial == null)
         {
@@ -133,7 +135,12 @@ public sealed class SyphonServer : MonoBehaviour
 
         // Texture capture mode update
         if (_captureMethod == CaptureMethod.Texture)
-            Graphics.CopyTexture(_sourceTexture, _plugin.texture);
+        {
+            var rt = RenderTexture.GetTemporary(_sourceTexture.width, _sourceTexture.height, 0);
+            Graphics.Blit(_sourceTexture, rt, _blitMaterial, KeepAlpha ? 1 : 0);
+            Graphics.CopyTexture(rt, _plugin.texture);
+            RenderTexture.ReleaseTemporary(rt);
+        }
 
         // Game View capture mode update
         if (_captureMethod == CaptureMethod.GameView)
