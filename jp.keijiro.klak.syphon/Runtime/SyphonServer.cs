@@ -27,6 +27,8 @@ public sealed class SyphonServer : MonoBehaviour
 
     [field:SerializeField] public bool KeepAlpha { get; set; }
 
+    [field:SerializeField] public SyphonResources Resources { get; set; }
+
     #endregion
 
     #region Property backing fields
@@ -125,7 +127,7 @@ public sealed class SyphonServer : MonoBehaviour
         // Blitter lazy initialization
         if (_blitMaterial == null)
         {
-            _blitMaterial = new Material(Shader.Find("Hidden/Klak/Syphon/Blit"));
+            _blitMaterial = new Material(Resources.blitShader);
             _blitMaterial.hideFlags = HideFlags.DontSave;
         }
 
