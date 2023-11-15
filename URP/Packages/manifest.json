@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "com.unity.ai.navigation": "1.1.5",
+    "com.unity.render-pipelines.universal": "14.0.9",
+    "com.unity.ugui": "1.0.0",
+    "jp.keijiro.klak.syphon": "file:../../jp.keijiro.klak.syphon"
+  }
+}
