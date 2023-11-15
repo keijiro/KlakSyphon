@@ -8,18 +8,73 @@ public sealed class SyphonClient : MonoBehaviour
 {
     #region Public properties
 
-    [field:SerializeField] public string ServerName { get; set; }
+    public string ServerName
+      { get => _serverName;
+        set { TeardownPlugin(); _serverName = value; } }
+
     [field:SerializeField] public RenderTexture TargetTexture { get; set; }
     [field:SerializeField] public Renderer TargetRenderer { get; set; }
     [field:SerializeField] public string TargetMaterialProperty { get; set; }
-    public Texture Texture => _texture;
+
+    public Texture2D Texture => _plugin.texture;
+
+    #endregion
+
+    #region Property backing fields
+
+    [SerializeField] string _serverName = "Syphon Server";
 
     #endregion
 
     #region Private members
 
-    (Plugin instance, string name) _plugin;
-    Texture2D _texture;
+    (Plugin instance, Texture2D texture) _plugin;
+
+    void SetupPlugin()
+    {
+        if (_plugin.instance != null) return;
+
+        // Server name validity check
+        if (string.IsNullOrEmpty(_serverName)) return;
+
+        // Plugin instantiation
+        _plugin.instance = Plugin.Create(_serverName);
+    }
+
+    void TeardownPlugin()
+    {
+        // Plugin instance/texture disposal
+        _plugin.instance?.Dispose();
+        Utility.Destroy(_plugin.texture);
+        _plugin = (null, null);
+
+        // Renderer reset
+        Utility.SetTexture(TargetRenderer, TargetMaterialProperty, null);
+    }
+
+    void UpdatePlugin()
+    {
+        // Plugin-side invalidation
+        if (_plugin.instance == null || !_plugin.instance.IsValid)
+        {
+            TeardownPlugin();
+            return;
+        }
+
+        // Plugin update
+        _plugin.instance.Update();
+
+        // Plugin texture invalidation
+        if (!_plugin.instance.HasSameTexture(_plugin.texture))
+        {
+            Utility.Destroy(_plugin.texture);
+            _plugin.texture = null;
+        }
+
+        // Plugin texture lazy initialization
+        if (_plugin.texture == null)
+            _plugin.texture = _plugin.instance.CreateTexture();
+    }
 
     #endregion
 
@@ -28,55 +83,26 @@ public sealed class SyphonClient : MonoBehaviour
     void Start()
       => InternalCommon.ApplyCurrentColorSpace();
 
+    void OnValidate()
+      => TeardownPlugin();
+
     void OnDisable()
-    {
-        // Client plugin disposal
-        _plugin.instance?.Dispose();
-        _plugin = (null, null);
-
-        // Texture disposal
-        Utility.Destroy(_texture);
-        _texture = null;
-
-        // Renderer reset
-        Utility.SetTexture(TargetRenderer, TargetMaterialProperty, null);
-    }
+      => TeardownPlugin();
 
     void Update()
     {
-        // Plugin invalidation on name changes
-        if (_plugin.name != ServerName) OnDisable();
+        SetupPlugin();
+        UpdatePlugin();
 
-        // Plugin lazy initialization
-        if (_plugin.instance == null)
-            _plugin = (Plugin.Create(ServerName), ServerName);
+        // Plugin texture readiness check
+        if (_plugin.texture == null) return;
 
-        // Plugin lazy disposal
-        if (_plugin.instance == null || !_plugin.instance.IsValid)
-        {
-            OnDisable();
-            return;
-        }
+        // Target texture update
+        if (TargetTexture != null)
+            Graphics.Blit(_plugin.texture, TargetTexture);
 
-        // Plugin update
-        _plugin.instance.Update();
-
-        // Plugin texture invalidation on plugin-side changes
-        if (!_plugin.instance.HasSameTexture(_texture))
-        {
-            Utility.Destroy(_texture);
-            _texture = null;
-        }
-
-        // Plugin texture lazy initialization
-        if (_texture == null) _texture = _plugin.instance.CreateTexture();
-
-        // Target texture blit
-        if (_texture != null && TargetTexture != null)
-            Graphics.Blit(_texture, TargetTexture);
-
-        // Renderer override
-        Utility.SetTexture(TargetRenderer, TargetMaterialProperty, _texture);
+        // Target renderer override
+        Utility.SetTexture(TargetRenderer, TargetMaterialProperty, _plugin.texture);
     }
 
     #endregion

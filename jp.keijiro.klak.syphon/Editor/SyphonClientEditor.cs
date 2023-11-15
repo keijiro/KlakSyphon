@@ -11,7 +11,7 @@ public class SyphonClientEditor : Editor
 
     #pragma warning disable CS0649
 
-    AutoProperty ServerName;
+    AutoProperty _serverName;
     AutoProperty TargetTexture;
     AutoProperty TargetRenderer;
     AutoProperty TargetMaterialProperty;
@@ -41,7 +41,7 @@ public class SyphonClientEditor : Editor
     void OnSelectName(object name)
     {
         serializedObject.Update();
-        ServerName.Target.stringValue = (string)name;
+        _serverName.Target.stringValue = (string)name;
         serializedObject.ApplyModifiedProperties();
     }
 
@@ -57,7 +57,7 @@ public class SyphonClientEditor : Editor
 
         // Server name selector
         EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.DelayedTextField(ServerName);
+        EditorGUILayout.DelayedTextField(_serverName);
         var rect = EditorGUILayout.GetControlRect(false, GUILayout.Width(60));
         if (EditorGUI.DropdownButton(rect, Labels.Select, FocusType.Keyboard))
             ShowServerNameDropdown(rect);

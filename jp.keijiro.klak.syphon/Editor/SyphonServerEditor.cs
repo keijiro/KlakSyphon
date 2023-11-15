@@ -15,7 +15,7 @@ public class SyphonServerEditor : Editor
     AutoProperty _captureMethod;
     AutoProperty _sourceCamera;
     AutoProperty _sourceTexture;
-    AutoProperty _keepAlpha;
+    AutoProperty KeepAlpha;
 
     #pragma warning restore
 
@@ -56,7 +56,7 @@ public class SyphonServerEditor : Editor
         EditorGUI.indentLevel--;
 
         // Keep Alpha
-        EditorGUILayout.PropertyField(_keepAlpha);
+        EditorGUILayout.PropertyField(KeepAlpha);
 
         serializedObject.ApplyModifiedProperties();
     }

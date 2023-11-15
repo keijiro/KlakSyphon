@@ -4,8 +4,6 @@ using Plugin = Klak.Syphon.Interop.PluginServer;
 
 namespace Klak.Syphon {
 
-public enum CaptureMethod { GameView, Camera, Texture }
-
 [ExecuteInEditMode]
 public sealed class SyphonServer : MonoBehaviour
 {
@@ -13,33 +11,30 @@ public sealed class SyphonServer : MonoBehaviour
 
     public string ServerName
       { get => _serverName;
-        set { Teardown(); _serverName = value; } }
+        set { TeardownPlugin(); _serverName = value; } }
 
     public CaptureMethod CaptureMethod
       { get => _captureMethod;
-        set { Teardown(); _captureMethod = value; } }
+        set { TeardownPlugin(); _captureMethod = value; } }
 
     public Camera SourceCamera
       { get => _sourceCamera;
-        set { Teardown(); _sourceCamera = value; } }
+        set { TeardownPlugin(); _sourceCamera = value; } }
 
     public Texture SourceTexture
       { get => _sourceTexture;
-        set { Teardown(); _sourceTexture = value; } }
+        set { TeardownPlugin(); _sourceTexture = value; } }
 
-    public bool KeepAlpha
-      { get => _keepAlpha;
-        set => _keepAlpha = value; }
+    [field:SerializeField] public bool KeepAlpha { get; set; }
 
     #endregion
 
-    #region Backing fields
+    #region Property backing fields
 
     [SerializeField] string _serverName = "Syphon Server";
     [SerializeField] CaptureMethod _captureMethod;
     [SerializeField] Camera _sourceCamera;
     [SerializeField] Texture _sourceTexture;
-    [SerializeField] bool _keepAlpha;
 
     #endregion
 
@@ -52,7 +47,7 @@ public sealed class SyphonServer : MonoBehaviour
     Camera _attachedCamera;
     #endif
 
-    void Setup()
+    void SetupPlugin()
     {
         if (_plugin.instance != null) return;
 
@@ -87,7 +82,7 @@ public sealed class SyphonServer : MonoBehaviour
               (_serverName, Screen.width, Screen.height);
     }
 
-    void Teardown()
+    void TeardownPlugin()
     {
         // Plugin instance/texture disposal
         _plugin.instance?.Dispose();
@@ -112,10 +107,10 @@ public sealed class SyphonServer : MonoBehaviour
       => InternalCommon.ApplyCurrentColorSpace();
 
     void OnValidate()
-      => Teardown();
+      => TeardownPlugin();
 
     void OnDisable()
-      => Teardown();
+      => TeardownPlugin();
 
     void OnDestroy()
     {
@@ -125,7 +120,7 @@ public sealed class SyphonServer : MonoBehaviour
 
     void Update()
     {
-        Setup();
+        SetupPlugin();
 
         // Blitter lazy initialization
         if (_blitMaterial == null)
@@ -144,7 +139,7 @@ public sealed class SyphonServer : MonoBehaviour
             var rt1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
             var rt2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
             ScreenCapture.CaptureScreenshotIntoRenderTexture(rt1);
-            Graphics.Blit(rt1, rt2, _blitMaterial, _keepAlpha ? 1 : 0);
+            Graphics.Blit(rt1, rt2, _blitMaterial, KeepAlpha ? 1 : 0);
             Graphics.CopyTexture(rt2, _plugin.texture);
             RenderTexture.ReleaseTemporary(rt1);
             RenderTexture.ReleaseTemporary(rt2);

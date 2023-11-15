@@ -1094,10 +1094,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b79770b2944d4cdeb52083e0a22da31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <ServerName>k__BackingField: Simple Server
   <TargetTexture>k__BackingField: {fileID: 0}
   <TargetRenderer>k__BackingField: {fileID: 0}
   <TargetMaterialProperty>k__BackingField: 
+  _serverName: Syphon Server
 --- !u!1 &1394931489
 GameObject:
   m_ObjectHideFlags: 0
@@ -1360,8 +1360,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59ae4f317f9b4f8b8d64f71768aaea6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  <KeepAlpha>k__BackingField: 1
   _serverName: Game View
-  <KeepAlpha>k__BackingField: 0
   _captureMethod: 0
   _sourceCamera: {fileID: 0}
   _sourceTexture: {fileID: 0}
