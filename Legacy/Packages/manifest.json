@@ -1,0 +1,16 @@
+{
+  "scopedRegistries": [
+    {
+      "name": "Keijiro",
+      "url": "https://registry.npmjs.com",
+      "scopes": [
+        "jp.keijiro"
+      ]
+    }
+  ],
+  "dependencies": {
+    "com.unity.ugui": "1.0.0",
+    "jp.keijiro.klak.syphon": "file:../../jp.keijiro.klak.syphon",
+    "jp.keijiro.testcards": "1.0.0"
+  }
+}
