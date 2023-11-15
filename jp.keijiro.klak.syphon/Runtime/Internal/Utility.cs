@@ -8,13 +8,11 @@ static class Utility
 
     public static void Destroy(Object obj)
     {
-        if (obj != null)
-        {
-            if (Application.isPlaying)
-                Object.Destroy(obj);
-            else
-                Object.DestroyImmediate(obj);
-        }
+        if (obj == null) return;
+        if (Application.isPlaying)
+            Object.Destroy(obj);
+        else
+            Object.DestroyImmediate(obj);
     }
 
     #endregion
@@ -33,13 +31,11 @@ static class Utility
 
     static Texture2D GetBlackTexture()
     {
-        if (_blackTexture == null)
-            _blackTexture = new Texture2D(8, 8);
+        if (_blackTexture == null) _blackTexture = new Texture2D(8, 8);
         return _blackTexture;
     }
 
-    public static void
-      SetTexture(Renderer renderer, string name, Texture texture)
+    public static void SetTexture(Renderer renderer, string name, Texture texture)
     {
         if (renderer == null || string.IsNullOrEmpty(name)) return;
         var sheet = GetSharedPropertyBlock();
@@ -47,11 +43,6 @@ static class Utility
         sheet.SetTexture(name, texture != null ? texture : GetBlackTexture());
         renderer.SetPropertyBlock(sheet);
     }
-
-    #endregion
-
-    #region Common texture
-
 
     #endregion
 }

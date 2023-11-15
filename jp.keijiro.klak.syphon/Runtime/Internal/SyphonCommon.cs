@@ -1,18 +1,18 @@
 using UnityEngine;
-using Klak.Syphon.Interop;
+using Plugin = Klak.Syphon.Interop.PluginCommon;
 
 namespace Klak.Syphon {
 
-internal static class SyphonCommon
+static class InternalCommon
 {
     // Apply the current color space setting.
     // Actually this is needed only once, but we do every time for simplicity.
-    internal static void ApplyCurrentColorSpace()
+    public static void ApplyCurrentColorSpace()
     {
         if (QualitySettings.activeColorSpace == ColorSpace.Linear)
-            PluginCommon.EnableColorSpaceConversion();
+            Plugin.EnableColorSpaceConversion();
         else
-            PluginCommon.DisableColorSpaceConversion();
+            Plugin.DisableColorSpaceConversion();
     }
 }
 

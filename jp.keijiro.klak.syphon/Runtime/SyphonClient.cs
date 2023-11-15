@@ -26,7 +26,7 @@ public sealed class SyphonClient : MonoBehaviour
     #region MonoBehaviour implementation
 
     void Start()
-      => SyphonCommon.ApplyCurrentColorSpace();
+      => InternalCommon.ApplyCurrentColorSpace();
 
     void OnDisable()
     {
