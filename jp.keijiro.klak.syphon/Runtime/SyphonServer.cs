@@ -11,47 +11,85 @@ public sealed class SyphonServer : MonoBehaviour
 {
     #region Public properties
 
-    [SerializeField] string _serverName = "Syphon Server";
-
     public string ServerName
       { get => _serverName;
-        set { ResetState(); _serverName = value; } }
-
-    [field:SerializeField] public bool KeepAlpha { get; set; }
-
-    [SerializeField] CaptureMethod _captureMethod;
+        set { Teardown(); _serverName = value; } }
 
     public CaptureMethod CaptureMethod
       { get => _captureMethod;
-        set { ResetState(); _captureMethod = value; } }
-
-    [SerializeField] Camera _sourceCamera;
+        set { Teardown(); _captureMethod = value; } }
 
     public Camera SourceCamera
       { get => _sourceCamera;
-        set { ResetState(); _sourceCamera = value; } }
-
-    [SerializeField] Texture _sourceTexture;
+        set { Teardown(); _sourceCamera = value; } }
 
     public Texture SourceTexture
       { get => _sourceTexture;
-        set { ResetState(); _sourceTexture = value; } }
+        set { Teardown(); _sourceTexture = value; } }
+
+    public bool KeepAlpha
+      { get => _keepAlpha;
+        set => _keepAlpha = value; }
+
+    #endregion
+
+    #region Backing fields
+
+    [SerializeField] string _serverName = "Syphon Server";
+    [SerializeField] CaptureMethod _captureMethod;
+    [SerializeField] Camera _sourceCamera;
+    [SerializeField] Texture _sourceTexture;
+    [SerializeField] bool _keepAlpha;
 
     #endregion
 
     #region Private members
 
     (Plugin instance, Texture2D texture) _plugin;
+    Material _blitMaterial;
 
     #if KLAK_SYPHON_HAS_SRP
     Camera _attachedCamera;
     #endif
 
-    Material _blitMaterial;
-
-    void ResetState()
+    void Setup()
     {
-        // Server plugin/texture disposal
+        if (_plugin.instance != null) return;
+
+        // Server name validity check
+        if (string.IsNullOrEmpty(_serverName)) return;
+
+        // Texture capture mode
+        if (_captureMethod == CaptureMethod.Texture)
+        {
+            if (_sourceTexture == null) return;
+            _plugin = Plugin.CreateWithBackedTexture
+              (_serverName, _sourceTexture.width, _sourceTexture.height);
+        }
+
+        // Camera capture mode
+        if (_captureMethod == CaptureMethod.Camera)
+        {
+            if (_sourceCamera == null) return;
+            _plugin = Plugin.CreateWithBackedTexture
+              (_serverName, _sourceCamera.pixelWidth, _sourceCamera.pixelHeight);
+
+            #if KLAK_SYPHON_HAS_SRP
+            // Callback registration
+            CameraCaptureBridge.AddCaptureAction(_sourceCamera, OnCameraCapture);
+            _attachedCamera = _sourceCamera;
+            #endif
+        }
+
+        // Game View capture mode
+        if (_captureMethod == CaptureMethod.GameView)
+            _plugin = Plugin.CreateWithBackedTexture
+              (_serverName, Screen.width, Screen.height);
+    }
+
+    void Teardown()
+    {
+        // Plugin instance/texture disposal
         _plugin.instance?.Dispose();
         Utility.Destroy(_plugin.texture);
         _plugin = (null, null);
@@ -59,8 +97,10 @@ public sealed class SyphonServer : MonoBehaviour
         #if KLAK_SYPHON_HAS_SRP
         // Camera capture callback reset
         if (_attachedCamera != null)
+        {
             CameraCaptureBridge.RemoveCaptureAction(_attachedCamera, OnCameraCapture);
-        _attachedCamera = null;
+            _attachedCamera = null;
+        }
         #endif
     }
 
@@ -72,10 +112,10 @@ public sealed class SyphonServer : MonoBehaviour
       => InternalCommon.ApplyCurrentColorSpace();
 
     void OnValidate()
-      => ResetState();
+      => Teardown();
 
     void OnDisable()
-      => ResetState();
+      => Teardown();
 
     void OnDestroy()
     {
@@ -85,33 +125,7 @@ public sealed class SyphonServer : MonoBehaviour
 
     void Update()
     {
-        // Server plugin lazy initialization
-        if (_plugin.instance == null)
-        {
-            if (string.IsNullOrEmpty(_serverName)) return;
-            if (_captureMethod == CaptureMethod.Texture)
-            {
-                if (_sourceTexture == null) return;
-                _plugin = Plugin.CreateWithBackedTexture
-                  (_serverName, _sourceTexture.width, _sourceTexture.height);
-            }
-            else if (_captureMethod == CaptureMethod.Camera)
-            {
-                if (_sourceCamera == null) return;
-                _plugin = Plugin.CreateWithBackedTexture
-                  (_serverName, _sourceCamera.pixelWidth, _sourceCamera.pixelHeight);
-                #if KLAK_SYPHON_HAS_SRP
-                // Camera capture callback setup
-                CameraCaptureBridge.AddCaptureAction(_sourceCamera, OnCameraCapture);
-                _attachedCamera = _sourceCamera;
-                #endif
-            }
-            else // CaptureMethod == CaptureMethod.GameView
-            {
-                _plugin = Plugin.CreateWithBackedTexture
-                  (_serverName, Screen.width, Screen.height);
-            }
-        }
+        Setup();
 
         // Blitter lazy initialization
         if (_blitMaterial == null)
@@ -120,17 +134,17 @@ public sealed class SyphonServer : MonoBehaviour
             _blitMaterial.hideFlags = HideFlags.DontSave;
         }
 
-        // Texture mode update
+        // Texture capture mode update
         if (_captureMethod == CaptureMethod.Texture)
             Graphics.CopyTexture(_sourceTexture, _plugin.texture);
 
-        // Game View mode update
+        // Game View capture mode update
         if (_captureMethod == CaptureMethod.GameView)
         {
             var rt1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
             var rt2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
             ScreenCapture.CaptureScreenshotIntoRenderTexture(rt1);
-            Graphics.Blit(rt1, rt2, _blitMaterial, KeepAlpha ? 1 : 0);
+            Graphics.Blit(rt1, rt2, _blitMaterial, _keepAlpha ? 1 : 0);
             Graphics.CopyTexture(rt2, _plugin.texture);
             RenderTexture.ReleaseTemporary(rt1);
             RenderTexture.ReleaseTemporary(rt2);
