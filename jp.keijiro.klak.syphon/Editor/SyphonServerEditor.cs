@@ -1,50 +1,56 @@
-// KlakSyphon - Syphon plugin for Unity
-// https://github.com/keijiro/KlakSyphon
-
 using UnityEngine;
 using UnityEditor;
 
-namespace Klak.Syphon
+namespace Klak.Syphon {
+
+[CustomEditor(typeof(SyphonServer))]
+public class SyphonServerEditor : Editor
 {
-    [CustomEditor(typeof(SyphonServer))]
-    public class SyphonServerEditor : Editor
+    #region Private members
+
+    #pragma warning disable CS0649
+
+    AutoProperty SourceTexture;
+    AutoProperty KeepAlpha;
+
+    #pragma warning restore
+
+    static class Labels
     {
-        SerializedProperty _sourceTexture;
-        SerializedProperty _alphaSupport;
-
-        void OnEnable()
-        {
-            _sourceTexture = serializedObject.FindProperty("_sourceTexture");
-            _alphaSupport = serializedObject.FindProperty("_alphaSupport");
-        }
-
-        public override void OnInspectorGUI()
-        {
-            serializedObject.Update();
-
-            var server = (SyphonServer)target;
-            var camera = server.GetComponent<Camera>();
-
-            if (camera != null)
-            {
-                EditorGUILayout.HelpBox(
-                    "Syphon Server is running in camera capture mode.",
-                    MessageType.None
-                );
-
-                EditorGUILayout.PropertyField(_alphaSupport);
-            }
-            else
-            {
-                EditorGUILayout.HelpBox(
-                    "Syphon Server is running in render texture mode.",
-                    MessageType.None
-                );
-
-                EditorGUILayout.PropertyField(_sourceTexture);
-            }
-
-            serializedObject.ApplyModifiedProperties();
-        }
+        public static Label CameraCapture =
+          "Syphon Server is running in camera capture mode.";
+        public static Label RenderTexture =
+          "Syphon Server is running in render texture mode.";
     }
+
+    #endregion
+
+    #region Editor implementation
+
+    void OnEnable() => AutoProperty.Scan(this);
+
+    public override void OnInspectorGUI()
+    {
+        serializedObject.Update();
+
+        var server = (SyphonServer)target;
+        var camera = server.GetComponent<Camera>();
+
+        if (camera != null)
+        {
+            EditorGUILayout.HelpBox(Labels.CameraCapture);
+            EditorGUILayout.PropertyField(KeepAlpha);
+        }
+        else
+        {
+            EditorGUILayout.HelpBox(Labels.RenderTexture);
+            EditorGUILayout.PropertyField(SourceTexture);
+        }
+
+        serializedObject.ApplyModifiedProperties();
+    }
+
+    #endregion
 }
+
+} // namespace Klak.Syphon
