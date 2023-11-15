@@ -12,7 +12,7 @@ public sealed class SyphonClient : MonoBehaviour
     [field:SerializeField] public RenderTexture TargetTexture { get; set; }
     [field:SerializeField] public Renderer TargetRenderer { get; set; }
     [field:SerializeField] public string TargetMaterialProperty { get; set; }
-    public Texture ReceivedTexture => _texture;
+    public Texture Texture => _texture;
 
     #endregion
 
