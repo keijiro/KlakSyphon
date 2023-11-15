@@ -3,6 +3,7 @@ using UnityEditor;
 
 namespace Klak.Syphon {
 
+[CanEditMultipleObjects]
 [CustomEditor(typeof(SyphonServer))]
 public class SyphonServerEditor : Editor
 {
@@ -10,18 +11,13 @@ public class SyphonServerEditor : Editor
 
     #pragma warning disable CS0649
 
-    AutoProperty SourceTexture;
+    AutoProperty _serverName;
     AutoProperty KeepAlpha;
+    AutoProperty _captureMethod;
+    AutoProperty _sourceCamera;
+    AutoProperty _sourceTexture;
 
     #pragma warning restore
-
-    static class Labels
-    {
-        public static Label CameraCapture =
-          "Syphon Server is running in camera capture mode.";
-        public static Label RenderTexture =
-          "Syphon Server is running in render texture mode.";
-    }
 
     #endregion
 
@@ -33,19 +29,34 @@ public class SyphonServerEditor : Editor
     {
         serializedObject.Update();
 
-        var server = (SyphonServer)target;
-        var camera = server.GetComponent<Camera>();
+        // Server Name
+        EditorGUILayout.DelayedTextField(_serverName);
 
-        if (camera != null)
+        // Capture Method
+        EditorGUILayout.PropertyField(_captureMethod);
+
+        EditorGUI.indentLevel++;
+
+        // Source Camera
+        if (_captureMethod.Target.hasMultipleDifferentValues ||
+            _captureMethod.Target.enumValueIndex == (int)CaptureMethod.Camera)
         {
-            EditorGUILayout.HelpBox(Labels.CameraCapture);
-            EditorGUILayout.PropertyField(KeepAlpha);
+            EditorGUILayout.PropertyField(_sourceCamera);
+            #if !KLAK_SYPHON_HAS_SRP
+            EditorGUILayout.HelpBox
+              ("Camera capture method is only available with SRP.", MessageType.Error);
+            #endif
         }
-        else
-        {
-            EditorGUILayout.HelpBox(Labels.RenderTexture);
-            EditorGUILayout.PropertyField(SourceTexture);
-        }
+
+        // Source Texture
+        if (_captureMethod.Target.hasMultipleDifferentValues ||
+            _captureMethod.Target.enumValueIndex == (int)CaptureMethod.Texture)
+            EditorGUILayout.PropertyField(_sourceTexture);
+
+        EditorGUI.indentLevel--;
+
+        // Keep Alpha
+        EditorGUILayout.PropertyField(KeepAlpha);
 
         serializedObject.ApplyModifiedProperties();
     }
