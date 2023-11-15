@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEditor;
-using ServerList = Klak.Syphon.Interop.ServerList;
 
 namespace Klak.Syphon {
 
@@ -32,10 +31,9 @@ public class SyphonClientEditor : Editor
     void ShowServerNameDropdown(Rect rect)
     {
         var menu = new GenericMenu();
-        using var list = ServerList.Create();
-        foreach (var name in list.GetNameArray())
+        foreach (var name in SyphonServerDirectory.ServerNames)
             menu.AddItem(new GUIContent(name), false, OnSelectName, name);
-        if (list.Count == 0)
+        if (menu.GetItemCount() == 0)
             menu.AddItem(new GUIContent("No server available"), false, null);
         menu.DropDown(rect);
     }

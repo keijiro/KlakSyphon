@@ -32,21 +32,6 @@ public sealed class ServerList : SafeHandleZeroOrMinusOneIsInvalid
 
     #endregion
 
-    #region Helper methods
-
-    public string[] GetNameArray()
-    {
-        var temp = new string[Count];
-        for (var i = 0; i < Count; i++)
-        {
-            var (app, name) = (GetAppName(i), GetName(i));
-            temp[i] = string.IsNullOrEmpty(name) ? app : $"{app}/{name}";
-        }
-        return temp;
-    }
-
-    #endregion
-
     #region Unmanaged interface
 
     string ToString(IntPtr ptr)
