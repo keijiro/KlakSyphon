@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "com.unity.render-pipelines.high-definition": "14.0.9",
+    "com.unity.ugui": "1.0.0",
+    "jp.keijiro.klak.syphon": "file:../../jp.keijiro.klak.syphon"
+  }
+}
