@@ -55,7 +55,7 @@ class ClientBenchmark : MonoBehaviour
         mr.sharedMaterial = _material;
 
         var client = go.GetComponent<SyphonClient>();
-        client.ServerName = $"Sender {index}";
+        client.ServerName = $"Unity/Server {index}";
         client.TargetRenderer = mr;
         client.TargetMaterialProperty = "_MainTex";
 

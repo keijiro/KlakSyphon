@@ -1998,8 +1998,8 @@ MonoBehaviour:
   <KeepAlpha>k__BackingField: 0
   <Resources>k__BackingField: {fileID: 11400000, guid: 4f35cf6570beb4605a26cd2d71c4f8fc, type: 2}
   _serverName: Gradient
-  _captureMethod: 2
-  _sourceCamera: {fileID: 0}
+  _captureMethod: 1
+  _sourceCamera: {fileID: 2085900138}
   _sourceTexture: {fileID: 8400000, guid: 73e8dcdfe3f22594693dc569656418c6, type: 2}
 --- !u!1 &1377898238
 GameObject:

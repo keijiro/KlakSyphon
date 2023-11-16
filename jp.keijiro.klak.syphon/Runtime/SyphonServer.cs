@@ -142,6 +142,15 @@ public sealed class SyphonServer : MonoBehaviour
             RenderTexture.ReleaseTemporary(rt);
         }
 
+        if (_attachedCamera != null && _attachedCamera.targetTexture != null)
+        {
+            var tex = _attachedCamera.targetTexture;
+            var rt = RenderTexture.GetTemporary(tex.width, tex.height, 0);
+            Graphics.Blit(tex, rt, _blitMaterial, KeepAlpha ? 1 : 0);
+            Graphics.CopyTexture(rt, _plugin.texture);
+            RenderTexture.ReleaseTemporary(rt);
+        }
+
         // Game View capture mode update
         if (_captureMethod == CaptureMethod.GameView)
         {
@@ -162,7 +171,12 @@ public sealed class SyphonServer : MonoBehaviour
     void OnCameraCapture(RenderTargetIdentifier source, CommandBuffer cb)
     {
         if (_attachedCamera == null) return;
-        // TO BE IMPLEMENTED
+        if (_attachedCamera.targetTexture != null) return;
+        var rtID = Shader.PropertyToID("SyphonTemp");
+        cb.GetTemporaryRT(rtID, _attachedCamera.pixelWidth, _attachedCamera.pixelHeight, 0);
+        cb.Blit(source, rtID, _blitMaterial, KeepAlpha ? 1 : 0);
+        cb.CopyTexture(rtID, _plugin.texture);
+        cb.ReleaseTemporaryRT(rtID);
     }
     #endif
 
