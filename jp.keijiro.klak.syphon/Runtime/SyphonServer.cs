@@ -170,7 +170,7 @@ public sealed class SyphonServer : MonoBehaviour
     #if KLAK_SYPHON_HAS_SRP
     void OnCameraCapture(RenderTargetIdentifier source, CommandBuffer cb)
     {
-        if (_attachedCamera == null || _plugin.texture == null)) return;
+        if (_attachedCamera == null || _plugin.texture == null) return;
         if (_attachedCamera.targetTexture != null) return;
         var rtID = Shader.PropertyToID("SyphonTemp");
         cb.GetTemporaryRT(rtID, _attachedCamera.pixelWidth, _attachedCamera.pixelHeight, 0);
