@@ -40,48 +40,128 @@ public sealed class SyphonServer : MonoBehaviour
 
     #endregion
 
-    #region Private members
+    #region SRP callback
 
-    (Plugin instance, Texture2D texture) _plugin;
-    Material _blitMaterial;
+    Camera _attachedCamera;
 
     #if KLAK_SYPHON_HAS_SRP
-    Camera _attachedCamera;
+
+    void AttachCameraCallback(Camera target)
+    {
+        CameraCaptureBridge.AddCaptureAction(target, OnCameraCapture);
+        _attachedCamera = target;
+    }
+
+    void ResetCameraCallback()
+    {
+        if (_attachedCamera == null) return;
+        CameraCaptureBridge.RemoveCaptureAction(_attachedCamera, OnCameraCapture);
+        _attachedCamera = null;
+    }
+
+    void OnCameraCapture(RenderTargetIdentifier source, CommandBuffer cb)
+    {
+        if (_attachedCamera == null || _plugin.texture == null) return;
+        // Do nothing in this spacial case (see notes in Update)
+        if (_attachedCamera.targetTexture != null) return;
+        BlitToPlugin(cb, source, _attachedCamera.pixelWidth, _attachedCamera.pixelHeight);
+    }
+
+    void UpdateCameraCapture()
+    {
+        // Camera capture mode special case update:
+        // The camera capture callback doesn't work correctly when bound to a
+        // target texture, so we blit from the target texture to the plugin.
+        if (_attachedCamera != null && _attachedCamera.targetTexture != null)
+            BlitToPlugin(_attachedCamera.targetTexture);
+    }
+
+    #else
+
+    void AttachCameraCallback(Camera target) {}
+    void ResetCameraCallback() {}
+    void UpdateCameraCapture() {}
+
     #endif
+
+    #endregion
+
+    #region Texture blitter
+
+    Material BlitMaterial => GetBlitMaterial();
+
+    Material _blitMaterial;
+
+    Material GetBlitMaterial()
+    {
+        if (_blitMaterial == null)
+        {
+            _blitMaterial = new Material(Resources.blitShader);
+            _blitMaterial.hideFlags = HideFlags.DontSave;
+        }
+        return _blitMaterial;
+    }
+
+    void DestroyBlitMaterial()
+    {
+        Utility.Destroy(_blitMaterial);
+        _blitMaterial = null;
+    }
+
+    void BlitToPlugin(Texture source)
+    {
+        var rt = RenderTexture.GetTemporary(source.width, source.height, 0);
+        Graphics.Blit(source, rt, BlitMaterial, KeepAlpha ? 1 : 0);
+        Graphics.CopyTexture(rt, _plugin.texture);
+        RenderTexture.ReleaseTemporary(rt);
+    }
+
+    void BlitToPlugin(CommandBuffer cb, RenderTargetIdentifier source,
+                      int sourceWidth, int sourceHeight)
+    {
+        var rtID = Shader.PropertyToID("SyphonTemp");
+        cb.GetTemporaryRT(rtID, sourceWidth, sourceHeight, 0);
+        cb.Blit(source, rtID, BlitMaterial, KeepAlpha ? 1 : 0);
+        cb.CopyTexture(rtID, _plugin.texture);
+        cb.ReleaseTemporaryRT(rtID);
+    }
+
+    #endregion
+
+    #region Syphon server plugin
+ 
+    (Plugin instance, Texture2D texture) _plugin;
 
     void SetupPlugin()
     {
         if (_plugin.instance != null) return;
 
-        // Server name validity check
+        // Server name validity
         if (string.IsNullOrEmpty(_serverName)) return;
 
         // Texture capture mode
         if (_captureMethod == CaptureMethod.Texture)
         {
             if (_sourceTexture == null) return;
-            _plugin = Plugin.CreateWithBackedTexture
-              (_serverName, _sourceTexture.width, _sourceTexture.height);
+            var (w, h) = (_sourceTexture.width, _sourceTexture.height);
+            _plugin = Plugin.CreateWithBackedTexture(_serverName, w, h);
         }
 
         // Camera capture mode
         if (_captureMethod == CaptureMethod.Camera)
         {
             if (_sourceCamera == null) return;
-            _plugin = Plugin.CreateWithBackedTexture
-              (_serverName, _sourceCamera.pixelWidth, _sourceCamera.pixelHeight);
-
-            #if KLAK_SYPHON_HAS_SRP
-            // Callback registration
-            CameraCaptureBridge.AddCaptureAction(_sourceCamera, OnCameraCapture);
-            _attachedCamera = _sourceCamera;
-            #endif
+            var (w, h) = (_sourceCamera.pixelWidth, _sourceCamera.pixelHeight);
+            _plugin = Plugin.CreateWithBackedTexture(_serverName, w, h);
+            AttachCameraCallback( _sourceCamera);
         }
 
         // Game View capture mode
         if (_captureMethod == CaptureMethod.GameView)
-            _plugin = Plugin.CreateWithBackedTexture
-              (_serverName, Screen.width, Screen.height);
+        {
+            var (w, h) = (Screen.width, Screen.height);
+            _plugin = Plugin.CreateWithBackedTexture(_serverName, w, h);
+        }
     }
 
     void TeardownPlugin()
@@ -91,14 +171,7 @@ public sealed class SyphonServer : MonoBehaviour
         Utility.Destroy(_plugin.texture);
         _plugin = (null, null);
 
-        #if KLAK_SYPHON_HAS_SRP
-        // Camera capture callback reset
-        if (_attachedCamera != null)
-        {
-            CameraCaptureBridge.RemoveCaptureAction(_attachedCamera, OnCameraCapture);
-            _attachedCamera = null;
-        }
-        #endif
+        ResetCameraCallback();
     }
 
     #endregion
@@ -115,10 +188,7 @@ public sealed class SyphonServer : MonoBehaviour
       => TeardownPlugin();
 
     void OnDestroy()
-    {
-        Utility.Destroy(_blitMaterial);
-        _blitMaterial = null;
-    }
+      => DestroyBlitMaterial();
 
     void Update()
     {
@@ -126,59 +196,26 @@ public sealed class SyphonServer : MonoBehaviour
 
         if (_plugin.instance == null) return;
 
-        // Blitter lazy initialization
-        if (_blitMaterial == null)
-        {
-            _blitMaterial = new Material(Resources.blitShader);
-            _blitMaterial.hideFlags = HideFlags.DontSave;
-        }
-
         // Texture capture mode update
         if (_captureMethod == CaptureMethod.Texture)
-        {
-            var rt = RenderTexture.GetTemporary(_sourceTexture.width, _sourceTexture.height, 0);
-            Graphics.Blit(_sourceTexture, rt, _blitMaterial, KeepAlpha ? 1 : 0);
-            Graphics.CopyTexture(rt, _plugin.texture);
-            RenderTexture.ReleaseTemporary(rt);
-        }
+            BlitToPlugin(_sourceTexture);
 
-        if (_attachedCamera != null && _attachedCamera.targetTexture != null)
-        {
-            var tex = _attachedCamera.targetTexture;
-            var rt = RenderTexture.GetTemporary(tex.width, tex.height, 0);
-            Graphics.Blit(tex, rt, _blitMaterial, KeepAlpha ? 1 : 0);
-            Graphics.CopyTexture(rt, _plugin.texture);
-            RenderTexture.ReleaseTemporary(rt);
-        }
+        // Camera capture mode update
+        if (_captureMethod == CaptureMethod.Camera)
+            UpdateCameraCapture();
 
         // Game View capture mode update
         if (_captureMethod == CaptureMethod.GameView)
         {
-            var rt1 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
-            var rt2 = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
-            ScreenCapture.CaptureScreenshotIntoRenderTexture(rt1);
-            Graphics.Blit(rt1, rt2, _blitMaterial, KeepAlpha ? 1 : 0);
-            Graphics.CopyTexture(rt2, _plugin.texture);
-            RenderTexture.ReleaseTemporary(rt1);
-            RenderTexture.ReleaseTemporary(rt2);
+            var rt = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
+            ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
+            BlitToPlugin(rt);
+            RenderTexture.ReleaseTemporary(rt);
         }
 
         // Frame update notification
         _plugin.instance.PublishTexture();
     }
-
-    #if KLAK_SYPHON_HAS_SRP
-    void OnCameraCapture(RenderTargetIdentifier source, CommandBuffer cb)
-    {
-        if (_attachedCamera == null || _plugin.texture == null) return;
-        if (_attachedCamera.targetTexture != null) return;
-        var rtID = Shader.PropertyToID("SyphonTemp");
-        cb.GetTemporaryRT(rtID, _attachedCamera.pixelWidth, _attachedCamera.pixelHeight, 0);
-        cb.Blit(source, rtID, _blitMaterial, KeepAlpha ? 1 : 0);
-        cb.CopyTexture(rtID, _plugin.texture);
-        cb.ReleaseTemporaryRT(rtID);
-    }
-    #endif
 
     #endregion
 }
