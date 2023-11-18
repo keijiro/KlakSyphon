@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Rendering;
+using System;
 
 namespace Klak.Syphon {
 
@@ -6,13 +8,13 @@ static class Utility
 {
     #region Object lifecycle
 
-    public static void Destroy(Object obj)
+    public static void Destroy(UnityEngine.Object obj)
     {
         if (obj == null) return;
         if (Application.isPlaying)
-            Object.Destroy(obj);
+            UnityEngine.Object.Destroy(obj);
         else
-            Object.DestroyImmediate(obj);
+            UnityEngine.Object.DestroyImmediate(obj);
     }
 
     #endregion
@@ -45,6 +47,37 @@ static class Utility
     }
 
     #endregion
+}
+
+static class Blitter
+{
+    static Material _material;
+
+    public static void Prepare(SyphonResources resources)
+    {
+        if (_material != null) return;
+        _material =  new Material(resources.blitShader);
+        _material.hideFlags = HideFlags.DontSave;
+    }
+
+    public static void Blit(Texture source, Texture destination, bool keepAlpha)
+    {
+        var rt = RenderTexture.GetTemporary(source.width, source.height, 0);
+        Graphics.Blit(source, rt, _material, keepAlpha ? 1 : 0);
+        Graphics.CopyTexture(rt, destination);
+        RenderTexture.ReleaseTemporary(rt);
+    }
+
+    public static void Blit(CommandBuffer cb, RenderTargetIdentifier source,
+              Texture destination, bool keepAlpha,
+              int sourceWidth, int sourceHeight)
+    {
+        var rtID = Shader.PropertyToID("SyphonTemp");
+        cb.GetTemporaryRT(rtID, sourceWidth, sourceHeight, 0);
+        cb.Blit(source, rtID, _material, keepAlpha ? 1 : 0);
+        cb.CopyTexture(rtID, destination);
+        cb.ReleaseTemporaryRT(rtID);
+    }
 }
 
 } // namespace Klak.Syphon

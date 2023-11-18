@@ -64,7 +64,8 @@ public sealed class SyphonServer : MonoBehaviour
         if (_attachedCamera == null || _plugin.texture == null) return;
         // Do nothing in this spacial case (see notes in Update)
         if (_attachedCamera.targetTexture != null) return;
-        BlitToPlugin(cb, source, _attachedCamera.pixelWidth, _attachedCamera.pixelHeight);
+        Blitter.Blit(cb, source, _plugin.texture, KeepAlpha,
+                     _attachedCamera.pixelWidth, _attachedCamera.pixelHeight);
     }
 
     void UpdateCameraCapture()
@@ -73,7 +74,7 @@ public sealed class SyphonServer : MonoBehaviour
         // The camera capture callback doesn't work correctly when bound to a
         // target texture, so we blit from the target texture to the plugin.
         if (_attachedCamera != null && _attachedCamera.targetTexture != null)
-            BlitToPlugin(_attachedCamera.targetTexture);
+            Blitter.Blit(_attachedCamera.targetTexture, _plugin.texture, KeepAlpha);
     }
 
     #else
@@ -83,48 +84,6 @@ public sealed class SyphonServer : MonoBehaviour
     void UpdateCameraCapture() {}
 
     #endif
-
-    #endregion
-
-    #region Texture blitter
-
-    Material BlitMaterial => GetBlitMaterial();
-
-    Material _blitMaterial;
-
-    Material GetBlitMaterial()
-    {
-        if (_blitMaterial == null)
-        {
-            _blitMaterial = new Material(Resources.blitShader);
-            _blitMaterial.hideFlags = HideFlags.DontSave;
-        }
-        return _blitMaterial;
-    }
-
-    void DestroyBlitMaterial()
-    {
-        Utility.Destroy(_blitMaterial);
-        _blitMaterial = null;
-    }
-
-    void BlitToPlugin(Texture source)
-    {
-        var rt = RenderTexture.GetTemporary(source.width, source.height, 0);
-        Graphics.Blit(source, rt, BlitMaterial, KeepAlpha ? 1 : 0);
-        Graphics.CopyTexture(rt, _plugin.texture);
-        RenderTexture.ReleaseTemporary(rt);
-    }
-
-    void BlitToPlugin(CommandBuffer cb, RenderTargetIdentifier source,
-                      int sourceWidth, int sourceHeight)
-    {
-        var rtID = Shader.PropertyToID("SyphonTemp");
-        cb.GetTemporaryRT(rtID, sourceWidth, sourceHeight, 0);
-        cb.Blit(source, rtID, BlitMaterial, KeepAlpha ? 1 : 0);
-        cb.CopyTexture(rtID, _plugin.texture);
-        cb.ReleaseTemporaryRT(rtID);
-    }
 
     #endregion
 
@@ -164,7 +123,7 @@ public sealed class SyphonServer : MonoBehaviour
         }
 
         // Coroutine start
-         StartCoroutine(CaptureCoroutine());
+        StartCoroutine(CaptureCoroutine());
     }
 
     void TeardownPlugin()
@@ -193,7 +152,7 @@ public sealed class SyphonServer : MonoBehaviour
 
             // Texture capture mode
             if (_captureMethod == CaptureMethod.Texture)
-                BlitToPlugin(_sourceTexture);
+                Blitter.Blit(_sourceTexture, _plugin.texture, KeepAlpha);
 
             // Camera capture mode
             if (_captureMethod == CaptureMethod.Camera)
@@ -205,7 +164,7 @@ public sealed class SyphonServer : MonoBehaviour
                 var (w, h) = (Screen.width, Screen.height);
                 var rt = RenderTexture.GetTemporary(w, h, 0);
                 ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
-                BlitToPlugin(rt);
+                Blitter.Blit(rt, _plugin.texture, KeepAlpha);
                 RenderTexture.ReleaseTemporary(rt);
             }
 
@@ -219,16 +178,16 @@ public sealed class SyphonServer : MonoBehaviour
     #region MonoBehaviour implementation
 
     void Start()
-      => InternalCommon.ApplyCurrentColorSpace();
+    {
+        InternalCommon.ApplyCurrentColorSpace();
+        Blitter.Prepare(Resources);
+    }
 
     void OnValidate()
       => TeardownPlugin();
 
     void OnDisable()
       => TeardownPlugin();
-
-    void OnDestroy()
-      => DestroyBlitMaterial();
 
     void Update()
       => SetupPlugin();
