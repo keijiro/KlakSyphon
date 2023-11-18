@@ -162,6 +162,9 @@ public sealed class SyphonServer : MonoBehaviour
             var (w, h) = (Screen.width, Screen.height);
             _plugin = Plugin.CreateWithBackedTexture(_serverName, w, h);
         }
+
+        // Coroutine start
+         StartCoroutine(CaptureCoroutine());
     }
 
     void TeardownPlugin()
@@ -172,6 +175,43 @@ public sealed class SyphonServer : MonoBehaviour
         _plugin = (null, null);
 
         ResetCameraCallback();
+        StopAllCoroutines();
+    }
+
+    #endregion
+
+    #region Capture coroutine
+
+    System.Collections.IEnumerator CaptureCoroutine()
+    {
+        for (var eof = new WaitForEndOfFrame(); true;)
+        {
+            // End of the frame
+            yield return eof;
+
+            if (_plugin.instance == null) continue;
+
+            // Texture capture mode
+            if (_captureMethod == CaptureMethod.Texture)
+                BlitToPlugin(_sourceTexture);
+
+            // Camera capture mode
+            if (_captureMethod == CaptureMethod.Camera)
+                UpdateCameraCapture();
+
+            // Game View capture mode
+            if (_captureMethod == CaptureMethod.GameView)
+            {
+                var (w, h) = (Screen.width, Screen.height);
+                var rt = RenderTexture.GetTemporary(w, h, 0);
+                ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
+                BlitToPlugin(rt);
+                RenderTexture.ReleaseTemporary(rt);
+            }
+
+            // Frame update notification
+            _plugin.instance.PublishTexture();
+        }
     }
 
     #endregion
@@ -191,31 +231,7 @@ public sealed class SyphonServer : MonoBehaviour
       => DestroyBlitMaterial();
 
     void Update()
-    {
-        SetupPlugin();
-
-        if (_plugin.instance == null) return;
-
-        // Texture capture mode update
-        if (_captureMethod == CaptureMethod.Texture)
-            BlitToPlugin(_sourceTexture);
-
-        // Camera capture mode update
-        if (_captureMethod == CaptureMethod.Camera)
-            UpdateCameraCapture();
-
-        // Game View capture mode update
-        if (_captureMethod == CaptureMethod.GameView)
-        {
-            var rt = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
-            ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
-            BlitToPlugin(rt);
-            RenderTexture.ReleaseTemporary(rt);
-        }
-
-        // Frame update notification
-        _plugin.instance.PublishTexture();
-    }
+      => SetupPlugin();
 
     #endregion
 }
