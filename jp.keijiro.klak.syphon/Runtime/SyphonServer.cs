@@ -121,6 +121,9 @@ public sealed class SyphonServer : MonoBehaviour
             _plugin = Plugin.CreateWithBackedTexture(_serverName, w, h);
         }
 
+        // Blitter lazy initialization
+        Blitter.Prepare(Resources);
+
         // Coroutine start
         StartCoroutine(CaptureCoroutine());
     }
@@ -175,10 +178,7 @@ public sealed class SyphonServer : MonoBehaviour
     #region MonoBehaviour implementation
 
     void Start()
-    {
-        InternalCommon.ApplyCurrentColorSpace();
-        Blitter.Prepare(Resources);
-    }
+      => InternalCommon.ApplyCurrentColorSpace();
 
     void OnValidate()
       => TeardownPlugin();
