@@ -217,7 +217,7 @@ GameObject:
   - component: {fileID: 1114794565}
   - component: {fileID: 1114794564}
   m_Layer: 0
-  m_Name: Senders
+  m_Name: Servers
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -391,7 +391,7 @@ GameObject:
   - component: {fileID: 1868758160}
   - component: {fileID: 1868758159}
   m_Layer: 0
-  m_Name: Receivers
+  m_Name: Clients
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -410,9 +410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
-  _material: {fileID: 2100000, guid: 7d717d2aa323e5c469963ea9c0a6cbe9, type: 2}
-  _resources: {fileID: 11400000, guid: 4f35cf6570beb4605a26cd2d71c4f8fc, type: 2}
-  _hostName: (enter localhost name)
+  _material: {fileID: -876546973899608171, guid: a8c703759a113434f8b6a1568791b99b, type: 3}
 --- !u!4 &1868758160
 Transform:
   m_ObjectHideFlags: 0
