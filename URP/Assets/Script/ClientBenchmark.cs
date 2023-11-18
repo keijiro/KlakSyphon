@@ -5,7 +5,6 @@ class ClientBenchmark : MonoBehaviour
 {
     [SerializeField] Mesh _mesh = null;
     [SerializeField] Material _material = null;
-    [SerializeField] SyphonResources _resources = null;
 
     GameObject[] _instances = new GameObject[16];
 
