@@ -10,15 +10,15 @@
     #include "UnityCG.cginc"
 
     sampler2D _MainTex;
+    float _KeepAlpha;
+    float _VFlip;
 
-    fixed4 frag_simple(v2f_img i) : SV_Target
+    half4 frag_simple(v2f_img i) : SV_Target
     {
-        return tex2D(_MainTex, i.uv);
-    }
-
-    fixed4 frag_clear_alpha(v2f_img i) : SV_Target
-    {
-        return fixed4(tex2D(_MainTex, i.uv).rgb, 1);
+        float2 uv = i.uv;
+        uv.y = lerp(uv.y, 1 - uv.y, _VFlip);
+        half4 c = tex2D(_MainTex, uv);
+        return half4(c.rgb, lerp(1, c.a, _KeepAlpha));
     }
 
     ENDCG
@@ -26,13 +26,6 @@
     SubShader
     {
         Cull Off ZWrite Off ZTest Always
-        Pass
-        {
-            CGPROGRAM
-            #pragma vertex vert_img
-            #pragma fragment frag_clear_alpha
-            ENDCG
-        }
         Pass
         {
             CGPROGRAM

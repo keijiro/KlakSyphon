@@ -64,8 +64,7 @@ public sealed class SyphonServer : MonoBehaviour
         if (_attachedCamera == null || _plugin.texture == null) return;
         // Do nothing in this spacial case (see notes in Update)
         if (_attachedCamera.targetTexture != null) return;
-        Blitter.Blit(cb, source, _plugin.texture, KeepAlpha,
-                     _attachedCamera.pixelWidth, _attachedCamera.pixelHeight);
+        Blitter.Blit(cb, source, _plugin.texture, KeepAlpha);
     }
 
     void UpdateCameraCapture()
@@ -161,10 +160,8 @@ public sealed class SyphonServer : MonoBehaviour
             // Game View capture mode
             if (_captureMethod == CaptureMethod.GameView)
             {
-                var (w, h) = (Screen.width, Screen.height);
-                var rt = RenderTexture.GetTemporary(w, h, 0);
-                ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
-                Blitter.Blit(rt, _plugin.texture, KeepAlpha);
+                var rt = Utility.CaptureScreenAsTempRT();
+                Blitter.Blit(rt, _plugin.texture, KeepAlpha, vflip: true);
                 RenderTexture.ReleaseTemporary(rt);
             }
 

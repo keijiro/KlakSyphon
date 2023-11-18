@@ -47,36 +47,61 @@ static class Utility
     }
 
     #endregion
+
+    #region Screen capture
+
+    public static RenderTexture CaptureScreenAsTempRT()
+    {
+        var rt = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
+        ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
+        return rt;
+    }
+
+    #endregion
 }
 
+// Shared custom blitter
 static class Blitter
 {
     static Material _material;
 
+    static class ID
+    {
+        public static int KeepAlpha = Shader.PropertyToID("_KeepAlpha");
+        public static int Temp = Shader.PropertyToID("_SyphonTemp");
+        public static int VFlip = Shader.PropertyToID("_VFlip");
+    }
+
     public static void Prepare(SyphonResources resources)
     {
         if (_material != null) return;
-        _material =  new Material(resources.blitShader);
+        _material = new Material(resources.blitShader);
         _material.hideFlags = HideFlags.DontSave;
     }
 
-    public static void Blit(Texture source, Texture destination, bool keepAlpha)
+    public static void Blit
+      (Texture source, Texture destination,
+       bool keepAlpha = false, bool vflip = false)
     {
+        _material.SetFloat(ID.KeepAlpha, keepAlpha ? 1 : 0);
+        _material.SetFloat(ID.VFlip, vflip ? 1 : 0);
         var rt = RenderTexture.GetTemporary(source.width, source.height, 0);
-        Graphics.Blit(source, rt, _material, keepAlpha ? 1 : 0);
+        Graphics.Blit(source, rt, _material);
         Graphics.CopyTexture(rt, destination);
         RenderTexture.ReleaseTemporary(rt);
     }
 
-    public static void Blit(CommandBuffer cb, RenderTargetIdentifier source,
-              Texture destination, bool keepAlpha,
-              int sourceWidth, int sourceHeight)
+    public static void Blit
+      (CommandBuffer cb,
+       RenderTargetIdentifier source, Texture destination,
+       bool keepAlpha = false, bool vflip = false)
     {
-        var rtID = Shader.PropertyToID("SyphonTemp");
-        cb.GetTemporaryRT(rtID, sourceWidth, sourceHeight, 0);
-        cb.Blit(source, rtID, _material, keepAlpha ? 1 : 0);
-        cb.CopyTexture(rtID, destination);
-        cb.ReleaseTemporaryRT(rtID);
+        _material.SetFloat(ID.KeepAlpha, keepAlpha ? 1 : 0);
+        _material.SetFloat(ID.VFlip, vflip ? 1 : 0);
+        cb.GetTemporaryRT(ID.Temp, destination.width, destination.height, 0);
+        cb.Blit(source, ID.Temp, _material);
+        cb.CopyTexture(ID.Temp, destination);
+        cb.ReleaseTemporaryRT(ID.Temp);
     }
 }
 
