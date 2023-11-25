@@ -63,6 +63,8 @@ public sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 
     #region Unmanaged interface
 
+    #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+
     [DllImport("KlakSyphon", EntryPoint = "Plugin_CreateClient")]
     static extern PluginClient _Create(string name, string appName);
 
@@ -83,6 +85,18 @@ public sealed class PluginClient : SafeHandleZeroOrMinusOneIsInvalid
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_UpdateClient")]
     static extern void _Update(PluginClient instance);
+
+    #else
+
+    static PluginClient _Create(string name, string appName) => null;
+    static void _Destroy(IntPtr instance) {}
+    static bool _IsValid(PluginClient instance) => false;
+    static IntPtr _GetTexture(PluginClient instance) => IntPtr.Zero;
+    static int _GetTextureWidth(PluginClient instance) => 0;
+    static int _GetTextureHeight(PluginClient instance) => 0;
+    static void _Update(PluginClient instance) {}
+
+    #endif
 
     #endregion
 }

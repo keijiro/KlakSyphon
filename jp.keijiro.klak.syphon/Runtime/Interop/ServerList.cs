@@ -37,6 +37,8 @@ public sealed class ServerList : SafeHandleZeroOrMinusOneIsInvalid
     string ToString(IntPtr ptr)
       => ptr != IntPtr.Zero ? Marshal.PtrToStringAnsi(ptr) : null;
 
+    #if UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
+
     [DllImport("KlakSyphon", EntryPoint = "Plugin_CreateServerList")]
     static extern ServerList _Create();
 
@@ -51,6 +53,16 @@ public sealed class ServerList : SafeHandleZeroOrMinusOneIsInvalid
 
     [DllImport("KlakSyphon", EntryPoint = "Plugin_GetAppNameFromServerList")]
     static extern IntPtr _GetAppName(ServerList list, int index);
+
+    #else
+
+    static ServerList _Create() => null;
+    static void _Destroy(IntPtr list) {}
+    static int _GetCount(ServerList list) => 0;
+    static IntPtr _GetName(ServerList list, int index) => IntPtr.Zero;
+    static IntPtr _GetAppName(ServerList list, int index) => IntPtr.Zero;
+
+    #endif
 
     #endregion
 }
