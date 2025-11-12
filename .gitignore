@@ -3,11 +3,14 @@ Desktop.ini
 .DS_Store
 *.swp
 
-/*/Library
-/*/Logs
-/*/Recordings
-/*/Temp
-/*/UserSettings
+/Library
+/Logs
+/Recordings
+/Temp
+/UIElementsSchema
+/UserSettings
+/.utmp
+/mono_crash.*.json
 
 /Plugin/**/*.o
 /Plugin/**/*.dylib
