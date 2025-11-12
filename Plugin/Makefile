@@ -19,8 +19,8 @@ Syphon/SyphonServerDirectory.m
 
 OBJS = $(CSRCS:.c=.o) $(MSRCS:.m=.o)
 
-CFLAGS = -O2 -Wall -ISyphon -IUnity -Wno-deprecated-declarations
-MFLAGS = $(CFLAGS) -include Syphon_Prefix.pch
+CFLAGS = -O2 -Wall -ISyphon -IUnity
+MFLAGS = $(CFLAGS) -fobjc-arc -include Syphon_Prefix.pch
 LDFLAGS = -shared
 LIBS = -framework Foundation -framework IOSurface -framework Metal -framework AppKit
 

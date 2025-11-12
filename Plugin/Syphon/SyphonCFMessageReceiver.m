@@ -31,6 +31,9 @@
 #import "SyphonMessaging.h"
 #import <libkern/OSAtomic.h>
 
+static dispatch_queue_t theQueue = NULL;
+static int theCount = 0;
+
 static CFDataRef MessageReturnCallback (
 								 CFMessagePortRef local,
 								 SInt32 msgid,
@@ -41,49 +44,77 @@ static CFDataRef MessageReturnCallback (
 	id <NSCoding> decoded;
 	if (data && CFDataGetLength(data))
 	{
-		decoded = [NSKeyedUnarchiver unarchiveObjectWithData:(NSData *)data];
+        NSSet<Class> *classes = ((__bridge SyphonMessageReceiver *)info).allowedClasses;
+        decoded = [NSKeyedUnarchiver unarchivedObjectOfClasses:classes fromData:(__bridge  NSData *)data error:nil];
 	} else {
 		decoded = nil;
 	}
-	[(SyphonMessageReceiver *)info receiveMessageWithPayload:decoded ofType:msgid];
+	[(__bridge SyphonMessageReceiver *)info receiveMessageWithPayload:decoded ofType:msgid];
 	return NULL;
 }
 
 @implementation SyphonCFMessageReceiver
-
-- (id)initForName:(NSString *)name protocol:(NSString *)protocolName handler:(void (^)(id data, uint32_t type))handler
 {
-    self = [super initForName:name protocol:protocolName handler:handler];
+@private
+    CFMessagePortRef _port;
+}
+
++ (dispatch_queue_t)addUser
+{
+    @synchronized(self) {
+        theCount++;
+        if (!theQueue)
+        {
+            dispatch_queue_attr_t attributes = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_SERIAL, QOS_CLASS_USER_INTERACTIVE, -1);
+            theQueue = dispatch_queue_create("info.v002.syphon.messaging", attributes);
+        }
+    }
+    return theQueue;
+}
+
++ (void)endUser
+{
+    @synchronized(self) {
+        theCount--;
+        if (theCount == 0)
+        {
+            theQueue = NULL;
+        }
+    }
+}
+
+- (id)initForName:(NSString *)name protocol:(NSString *)protocolName allowedClasses:(NSSet<Class> *)classes handler:(void (^)(id data, uint32_t type))handler
+{
+    self = [super initForName:name protocol:protocolName allowedClasses:classes handler:handler];
 	if (self)
 	{
 		if ([protocolName isEqualToString:SyphonMessagingProtocolCFMessage])
 		{
-			CFMessagePortContext context = (CFMessagePortContext){0,self,NULL,NULL,NULL};
+			CFMessagePortContext context = (CFMessagePortContext){0,(__bridge void *)(self),NULL,NULL,NULL};
 			_port = CFMessagePortCreateLocal(kCFAllocatorDefault, (CFStringRef)name, MessageReturnCallback, &context, NULL);
 		}
 		if (_port == NULL)
 		{
-			[self release];
 			return nil;
 		}
-		_runLoopSource = CFMessagePortCreateRunLoopSource(kCFAllocatorDefault, _port, 0);
-		// TODO: Think about which run loop we want to be in (current thread, our own private, main, or what?)
-		CFRunLoopAddSource(CFRunLoopGetMain(), _runLoopSource, kCFRunLoopCommonModes);
+        CFMessagePortSetDispatchQueue(_port, [[self class] addUser]);
 	}
 	return self;
 }
 
 - (void)dealloc
 {
-	if (_runLoopSource) CFRelease(_runLoopSource);
 	if (_port) CFRelease(_port);
-	[super dealloc];
 }
 
 - (void)invalidate
 {
-	if (_port) CFMessagePortInvalidate(_port);
-	if (_runLoopSource) CFRunLoopSourceInvalidate(_runLoopSource);
-	[super invalidate];
+	if (_port)
+    {
+        CFMessagePortInvalidate(_port);
+        // we only called addUser if _port was created
+        [[self class] endUser];
+    }
+    [super invalidate];
 }
 @end

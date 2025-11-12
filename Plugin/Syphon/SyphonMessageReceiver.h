@@ -27,24 +27,18 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 
-#define SYPHON_MESSAGE_RECEIVER_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonMessageReceiver)
-
-@interface SYPHON_MESSAGE_RECEIVER_UNIQUE_CLASS_NAME : NSObject {
-@private
-	NSString *_name;
-	void (^_handler)(id <NSCoding>, uint32_t);
-}
-- (id)initForName:(NSString *)name protocol:(NSString *)protocolName handler:(void (^)(id payload, uint32_t type))handler;
+@interface SyphonMessageReceiver : NSObject
+- (id)initForName:(NSString *)name
+         protocol:(NSString *)protocolName
+   allowedClasses:(NSSet<Class> *)classes
+          handler:(void (^)(id payload, uint32_t type))handler;
 @property (readonly) NSString *name;
+@property (readonly, nonatomic) NSSet<Class> *allowedClasses;
 // Always invalidate before release
 - (void)invalidate;
 @end
-@interface SYPHON_MESSAGE_RECEIVER_UNIQUE_CLASS_NAME (Subclassing)
+@interface SyphonMessageReceiver (Subclassing)
 - (void)receiveMessageWithPayload:(id)payload ofType:(uint32_t)type;
 @end
-
-#if defined(SYPHON_USE_CLASS_ALIAS)
-@compatibility_alias SyphonMessageReceiver SYPHON_MESSAGE_RECEIVER_UNIQUE_CLASS_NAME;
-#endif

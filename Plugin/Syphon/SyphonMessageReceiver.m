@@ -30,19 +30,25 @@
 #import "SyphonMessageReceiver.h"
 #import "SyphonMessaging.h"
 #import "SyphonCFMessageReceiver.h"
+//#import "SyphonMachMessageReceiver.h"
 
 @implementation SyphonMessageReceiver
-- (id)initForName:(NSString *)name protocol:(NSString *)protocolName handler:(void (^)(id payload, uint32_t type))handler
+{
+@private
+    NSString *_name;
+    void (^_handler)(id <NSCoding>, uint32_t);
+}
+
+- (id)initForName:(NSString *)name protocol:(NSString *)protocolName allowedClasses:(NSSet<Class> *)classes handler:(void (^)(id payload, uint32_t type))handler
 {
     self = [super init];
     if (self)
 	{
 		if ([self class] == [SyphonMessageReceiver class])
 		{
-            [self release];
             if ([protocolName isEqualToString:SyphonMessagingProtocolCFMessage])
 			{
-                return [[SyphonCFMessageReceiver alloc] initForName:name protocol:protocolName handler:handler];
+                return [[SyphonCFMessageReceiver alloc] initForName:name protocol:protocolName allowedClasses:classes handler:handler];
             }
 			else
 			{
@@ -54,10 +60,10 @@
 			// SyphonMessageReceiver init here
 			if (handler == nil)
 			{
-				[self release];
 				return nil;
 			}
 			_name = [name copy];
+            _allowedClasses = classes;
 			_handler = [handler copy];
 		}
 	}
@@ -69,12 +75,6 @@
 	
 }
 
-- (void)dealloc
-{
-	[_name release];
-	[_handler release];
-	[super dealloc];
-}
 
 - (NSString *)name
 {

@@ -15,3 +15,5 @@ Desktop.ini
 /Plugin/**/*.o
 /Plugin/**/*.dylib
 /Plugin/**/*.bundle
+
+/Syphon-Framework

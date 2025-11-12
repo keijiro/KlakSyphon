@@ -50,20 +50,20 @@ void Plugin_DisableColorSpaceConversion(void)
 LiteServer *Plugin_CreateServer(const char *cname, int width, int height)
 {
     NSString *name = [NSString stringWithUTF8String:cname];
-    return [[LiteServer alloc] initWithName:name
-                                 dimensions:NSMakeSize(width, height)
-                                pixelFormat:s_pixelFormat
-                                     device:GetMetalDevice()];
+    return (__bridge LiteServer *)CFBridgingRetain([[LiteServer alloc] initWithName:name
+                                                                         dimensions:NSMakeSize(width, height)
+                                                                        pixelFormat:s_pixelFormat
+                                                                             device:GetMetalDevice()]);
 }
 
 void Plugin_DestroyServer(LiteServer *server)
 {
-    [server release];
+    CFRelease((__bridge CFTypeRef)server);
 }
 
 void *Plugin_GetServerTexture(LiteServer *server)
 {
-    return server.texture;
+    return (__bridge void *)server.texture;
 }
 
 void Plugin_PublishServerTexture(LiteServer *server)
@@ -80,12 +80,12 @@ void *Plugin_CreateClient(const char *pName, const char *pAppName)
     SyphonServerDirectory *dir = SyphonServerDirectory.sharedDirectory;
     NSArray *servers = [dir serversMatchingName:name appName:appName];
     if (servers.count == 0) return NULL;
-    return [[LiteClient alloc] initWithServerDescription:servers[0]];
+    return (void *)CFBridgingRetain([[LiteClient alloc] initWithServerDescription:servers[0]]);
 }
 
 void Plugin_DestroyClient(LiteClient *client)
 {
-    [client release];
+    CFRelease((__bridge CFTypeRef)client);
 }
 
 int Plugin_IsClientValid(LiteClient *client)
@@ -95,7 +95,7 @@ int Plugin_IsClientValid(LiteClient *client)
 
 void *Plugin_GetClientTexture(LiteClient *client)
 {
-    return client.texture;
+    return (__bridge void *)client.texture;
 }
 
 int Plugin_GetClientTextureWidth(LiteClient *client)
@@ -117,12 +117,12 @@ void Plugin_UpdateClient(LiteClient *client)
 
 NSArray *Plugin_CreateServerList()
 {
-    return [SyphonServerDirectory.sharedDirectory.servers retain];
+    return (__bridge NSArray *)CFBridgingRetain(SyphonServerDirectory.sharedDirectory.servers);
 }
 
 void Plugin_DestroyServerList(NSArray *list)
 {
-    [list release];
+    CFRelease((__bridge CFTypeRef)list);
 }
 
 int Plugin_GetServerListCount(NSArray *list)

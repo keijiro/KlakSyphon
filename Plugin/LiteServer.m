@@ -5,6 +5,7 @@
 
 #import "LiteServer.h"
 #import "SyphonServerConnectionManager.h"
+#import "SyphonPrivate.h"
 #import <Metal/MTLDevice.h>
 #import <Metal/MTLTexture.h>
 
@@ -39,6 +40,7 @@
         NSDictionary *attribs = @{ (NSString *)kIOSurfaceIsGlobal: @YES,
                                    (NSString *)kIOSurfaceWidth: @(size.width),
                                    (NSString *)kIOSurfaceHeight: @(size.height),
+                                   (NSString *)kIOSurfacePixelFormat: @(kCVPixelFormatType_32BGRA),
                                    (NSString *)kIOSurfaceBytesPerElement: @4u };
         _ioSurface = IOSurfaceCreate((CFDictionaryRef)attribs);
 
@@ -46,6 +48,7 @@
                                                                                         width:size.width
                                                                                        height:size.height
                                                                                     mipmapped:NO];
+        desc.usage = MTLTextureUsageRenderTarget | MTLTextureUsageShaderRead;
         _texture = [device newTextureWithDescriptor:desc iosurface:_ioSurface plane:0];
 
         _connection = [[SyphonServerConnectionManager alloc] initWithUUID:_uuid options:nil];
@@ -61,19 +64,9 @@
 {
     [self stopBroadcasts];
 
-    if (_connection)
-    {
-        [_connection stop];
-        [_connection release];
-    }
+    if (_connection) [_connection stop];
 
-    [_texture release];
     CFRelease(_ioSurface);
-
-    [_name release];
-    [_uuid release];
-
-    [super dealloc];
 }
 
 #pragma mark - Public method
@@ -97,7 +90,7 @@
     if (!appName) appName = [[NSProcessInfo processInfo] processName];
     if (!appName) appName = [NSString string];
 
-    return @{ SyphonServerDescriptionDictionaryVersionKey: @kSyphonDictionaryVersion,
+    return @{ SyphonServerDescriptionDictionaryVersionKey: @(kSyphonDictionaryVersion),
               SyphonServerDescriptionNameKey: _name,
               SyphonServerDescriptionUUIDKey: _uuid,
               SyphonServerDescriptionAppNameKey: appName,

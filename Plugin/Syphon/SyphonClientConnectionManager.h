@@ -28,10 +28,7 @@
  */
 
 
-#import <Cocoa/Cocoa.h>
-#import <IOSurface/IOSurface.h>
-#import <libkern/OSAtomic.h>
-#import "SyphonMessaging.h"
+#import <Foundation/Foundation.h>
 
 /* This object handles messaging to and from the server.
 
@@ -56,33 +53,11 @@
 - (void)invalidateFrame;
 @end
 
-#define SYPHON_CLIENT_CONNECTION_MANAGER_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonClientConnectionManager)
-
-@interface SYPHON_CLIENT_CONNECTION_MANAGER_UNIQUE_CLASS_NAME : NSObject
-{
-@private
-	NSString *_myUUID;
-	IOSurfaceID _surfaceID;
-	IOSurfaceRef _surface;
-	uint32_t _lastSeed;
-	NSUInteger _frameID;
-	NSString *_serverUUID;
-	BOOL _serverActive;
-	SyphonMessageReceiver *_connection;
-	int32_t _handlerCount;
-    NSHashTable *_infoClients;
-	NSHashTable *_frameClients;
-	dispatch_queue_t _frameQueue;
-	OSSpinLock _lock;
-}
-- (id)initWithServerDescription:(NSDictionary *)description;
-- (IOSurfaceRef)surfaceHavingLock;
+@interface SyphonClientConnectionManager : NSObject
+- (id)initWithServerDescription:(NSDictionary<NSString *, id> *)description;
 @property (readonly) BOOL isValid;
 - (void)addInfoClient:(id <SyphonInfoReceiving>)client isFrameClient:(BOOL)frameClient;     // Must be
 - (void)removeInfoClient:(id <SyphonInfoReceiving>)client isFrameClient:(BOOL)frameClient;  // paired
+- (IOSurfaceRef)newSurface;
 @property (readonly) NSUInteger frameID;
 @end
-
-#if defined(SYPHON_USE_CLASS_ALIAS)
-@compatibility_alias SyphonClientConnectionManager SYPHON_CLIENT_CONNECTION_MANAGER_UNIQUE_CLASS_NAME;
-#endif

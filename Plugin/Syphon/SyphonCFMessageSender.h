@@ -2,7 +2,7 @@
     SyphonCFMessageSender.h
     Syphon
 
-    Copyright 2010-2011 bangnoise (Tom Butterworth) & vade (Anton Marini).
+    Copyright 2010-2023 bangnoise (Tom Butterworth) & vade (Anton Marini).
     All rights reserved.
 
     Redistribution and use in source and binary forms, with or without
@@ -27,21 +27,10 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "SyphonMessageSender.h"
 #import "SyphonMessageQueue.h"
 #import "SyphonDispatch.h"
 
-#define SYPHON_CFMESSAGE_SENDER_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonCFMessageSender)
-
-@interface SYPHON_CFMESSAGE_SENDER_UNIQUE_CLASS_NAME : SyphonMessageSender {
-@private
-	CFMessagePortRef _port;
-	SyphonMessageQueue *_queue;
-	SyphonDispatchSourceRef _dispatch;
-}
+@interface SyphonCFMessageSender : SyphonMessageSender
 @end
-
-#if defined(SYPHON_USE_CLASS_ALIAS)
-@compatibility_alias SyphonCFMessageSender SYPHON_CFMESSAGE_SENDER_UNIQUE_CLASS_NAME;
-#endif

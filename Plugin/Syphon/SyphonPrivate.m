@@ -66,6 +66,6 @@ void SyphonSafeBoolSet(SyphonSafeBool *b, BOOL value)
 	int32_t new = value ? 1 : 0;
 	do {
 		int32_t old = *b;
-		result = OSAtomicCompareAndSwap32(old, new, b);
+        result = atomic_compare_exchange_strong(b, &old, new);
 	} while (!result);
 }

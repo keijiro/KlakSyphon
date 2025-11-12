@@ -26,11 +26,12 @@
      (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
      SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#import <libkern/OSAtomic.h> // For SyphonSafeBool
 
 #define kSyphonDictionaryVersion 0U
 
 #ifdef __OBJC__
+
+#import <stdatomic.h> // For SyphonSafeBool
 
 #define kSyphonIdentifier @"info.v002.Syphon"
 
@@ -61,7 +62,7 @@ extern NSString * const SyphonServerOptionStencilBufferResolution;
 
 NSString *SyphonCreateUUIDString(void) NS_RETURNS_RETAINED;
 
-typedef volatile int32_t SyphonSafeBool;
+typedef atomic_int_fast32_t SyphonSafeBool;
 
 BOOL SyphonSafeBoolGet(SyphonSafeBool *b);
 void SyphonSafeBoolSet(SyphonSafeBool *b, BOOL value);

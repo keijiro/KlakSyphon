@@ -27,8 +27,7 @@
 	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#import <Cocoa/Cocoa.h>
-#import <libkern/OSAtomic.h>
+#import <Foundation/Foundation.h>
 
 /*
  
@@ -39,15 +38,7 @@
  
  */
 
-#define SYPHON_MESSAGE_QUEUE_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonMessageQueue)
-
-@interface SYPHON_MESSAGE_QUEUE_UNIQUE_CLASS_NAME : NSObject {
-@private
-	OSSpinLock _lock;
-	void *_head;
-	OSQueueHead _pool; // TODO: or maybe manage our own within the lock as we lock anyway
-	void *_info;
-}
+@interface SyphonMessageQueue : NSObject
 
 - (void)queue:(NSData *)content ofType:(uint32_t)type;
 /*
@@ -65,7 +56,3 @@
 @property (readwrite, assign) void *userInfo;
 
 @end
-
-#if defined(SYPHON_USE_CLASS_ALIAS)
-@compatibility_alias SyphonMessageQueue SYPHON_MESSAGE_QUEUE_UNIQUE_CLASS_NAME;
-#endif

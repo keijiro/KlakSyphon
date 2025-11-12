@@ -27,7 +27,9 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import <Foundation/Foundation.h>
 #import "SyphonMessageReceiver.h"
 #import "SyphonMessageSender.h"
 
+//extern NSString * const SyphonMessagingProtocolMachMessage;
 extern NSString * const SyphonMessagingProtocolCFMessage;

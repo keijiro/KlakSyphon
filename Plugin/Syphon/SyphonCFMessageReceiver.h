@@ -27,19 +27,9 @@
     SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import <Cocoa/Cocoa.h>
+#import <Foundation/Foundation.h>
 #import "SyphonMessageReceiver.h"
 
-#define SYPHON_CFMESSAGE_RECEIVER_UNIQUE_CLASS_NAME SYPHON_UNIQUE_CLASS_NAME(SyphonCFMessageReceiver)
-
-@interface SYPHON_CFMESSAGE_RECEIVER_UNIQUE_CLASS_NAME : SyphonMessageReceiver {
-@private
-	CFMessagePortRef _port;
-	CFRunLoopSourceRef _runLoopSource;
-}
+@interface SyphonCFMessageReceiver : SyphonMessageReceiver
 
 @end
-
-#if defined(SYPHON_USE_CLASS_ALIAS)
-@compatibility_alias SyphonCFMessageReceiver SYPHON_CFMESSAGE_RECEIVER_UNIQUE_CLASS_NAME;
-#endif
