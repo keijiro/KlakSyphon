@@ -62,25 +62,13 @@ public sealed class SyphonServer : MonoBehaviour
     void OnCameraCapture(RenderTargetIdentifier source, CommandBuffer cb)
     {
         if (_attachedCamera == null || _plugin.texture == null) return;
-        // Do nothing in this spacial case (see notes in Update)
-        if (_attachedCamera.targetTexture != null) return;
         Blitter.Blit(cb, source, _plugin.texture, KeepAlpha);
-    }
-
-    void UpdateCameraCapture()
-    {
-        // Camera capture mode special case update:
-        // The camera capture callback doesn't work correctly when bound to a
-        // target texture, so we blit from the target texture to the plugin.
-        if (_attachedCamera != null && _attachedCamera.targetTexture != null)
-            Blitter.Blit(_attachedCamera.targetTexture, _plugin.texture, KeepAlpha);
     }
 
     #else
 
     void AttachCameraCallback(Camera target) {}
     void ResetCameraCallback() {}
-    void UpdateCameraCapture() {}
 
     #endif
 
@@ -155,10 +143,6 @@ public sealed class SyphonServer : MonoBehaviour
             // Texture capture mode
             if (_captureMethod == CaptureMethod.Texture)
                 Blitter.Blit(_sourceTexture, _plugin.texture, KeepAlpha);
-
-            // Camera capture mode
-            if (_captureMethod == CaptureMethod.Camera)
-                UpdateCameraCapture();
 
             // Game View capture mode
             if (_captureMethod == CaptureMethod.GameView)

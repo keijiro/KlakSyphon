@@ -85,7 +85,7 @@ static class Blitter
     {
         _material.SetFloat(ID.KeepAlpha, keepAlpha ? 1 : 0);
         _material.SetFloat(ID.VFlip, vflip ? 1 : 0);
-        var rt = RenderTexture.GetTemporary(source.width, source.height, 0);
+        var rt = RenderTexture.GetTemporary(destination.width, destination.height, 0);
         Graphics.Blit(source, rt, _material);
         Graphics.CopyTexture(rt, destination);
         RenderTexture.ReleaseTemporary(rt);
