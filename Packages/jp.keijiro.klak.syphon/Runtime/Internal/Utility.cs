@@ -52,6 +52,7 @@ static class Utility
 
     public static RenderTexture CaptureScreenAsTempRT()
     {
+        RenderTexture.active = null;
         var rt = RenderTexture.GetTemporary(Screen.width, Screen.height, 0);
         ScreenCapture.CaptureScreenshotIntoRenderTexture(rt);
         return rt;
