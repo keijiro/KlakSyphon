@@ -12,6 +12,8 @@ Desktop.ini
 /.utmp
 /mono_crash.*.json
 
+/*.tgz
+
 /Plugin/**/*.o
 /Plugin/**/*.dylib
 /Plugin/**/*.bundle
