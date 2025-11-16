@@ -35,9 +35,10 @@ Perform the following tasks:
 ## About the `_upm` Element in package.json
 
 The `_upm` element in package.json contains only the `changelog` entry. Copy the
-latest version section from CHANGELOG.md into that entry, but convert it to
-Unity Rich Text. Use `<b>` tags for headings and `<br>` for line breaks. Insert
-an extra `<br>` before every heading after the first one.
+latest version section from CHANGELOG.md into that entry, but remove the section
+heading (version number and a date) and convert the content to Unity Rich Text.
+Use `<b>` tags for headings and `<br>` for line breaks. Insert an extra `<br>`
+before every heading after the first one.
 
 ## Action Definition: Releasing the Package
 
